@@ -16,7 +16,10 @@ public class LearnActivity extends AppCompatActivity {
 
         // upon loading draw a test graph to see if everything is working
         Graph myGraph = new Graph(this, R.id.learnActCanvasId);
-        myGraph.generateTest();
+        //myGraph.generateTest();
+
+        // generate undirected graph, of 12 nodes arranged in 3 rows and 4 col with 58 directed
+        myGraph.generate(3, 4, 100, new int[] {150, 150, 450, 150}, 100, false);
         myGraph.draw();
     }
 

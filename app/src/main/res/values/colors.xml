@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorRed">#c61212</color>
     <color name="colorGreen">#21ac2f</color>
+    <color name="nodeColor">#9aeff7</color>
+    <color name="edgeColor">#303F9F</color>
 </resources>
