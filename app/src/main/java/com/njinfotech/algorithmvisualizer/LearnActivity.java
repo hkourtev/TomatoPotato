@@ -14,8 +14,10 @@ public class LearnActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
 
-        Graph myGraph = new Graph(this);
-        myGraph.generate();
+        // upon loading draw a test graph to see if everything is working
+        Graph myGraph = new Graph(this, R.id.learnActCanvasId);
+        myGraph.generateTest();
+        myGraph.draw();
     }
 
 }
