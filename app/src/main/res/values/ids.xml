@@ -4,4 +4,5 @@
     <item name="btnGoToTestAct" type="id" />
     <item name="btnGoToStatsAct" type="id" />
     <item name="btnExit" type="id" />
+    <item name="learnActCanvasId" type="id" />
 </resources>
