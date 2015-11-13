@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Algorithm Visualizer</string>
+    <string name="btnGoToLearnAct">Learn</string>
+    <string name="btnGoToTestAct">Test</string>
+    <string name="btnGoToStatsAct">Statistics</string>
+    <string name="btnExit">Exit</string>
+    <string name="title_activity_learn">Learn Activity</string>
+    <string name="title_activity_test">Test Activity</string>
 </resources>

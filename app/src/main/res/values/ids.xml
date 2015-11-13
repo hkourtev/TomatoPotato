@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="btnGoToLearnAct" type="id" />
+    <item name="btnGoToTestAct" type="id" />
+    <item name="btnGoToStatsAct" type="id" />
+    <item name="btnExit" type="id" />
+</resources>
