@@ -7,11 +7,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.NonNull;
 import android.view.Display;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by hkourtev on 11/12/15.
@@ -31,6 +36,8 @@ public class Graph {
     private Bitmap canvasBg;
     private RelativeLayout drawSpace;
     private Canvas canvas;
+
+    private Set<Integer> edgeWeights = new TreeSet<Integer>();
 
     public Graph() {
 
@@ -188,7 +195,7 @@ public class Graph {
                 // create all edges
                 for (int h = 0; h < numNodes; h++) {
                     if (adjMatrix[p][h] != -1000000) {
-                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, 0, 5, act.getResources().getColor(R.color.edgeColor));
+                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, genEdgeWeight(), 5, act.getResources().getColor(R.color.edgeColor));
                         edgeCount++;
                     }
                 }
@@ -196,12 +203,27 @@ public class Graph {
                 // use only half of adj matrix
                 for (int h=p; h<numNodes; h++) {
                     if (adjMatrix[p][h] != -1000000) {
-                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, 0, 5, act.getResources().getColor(R.color.edgeColor));
+                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, genEdgeWeight(), 5, act.getResources().getColor(R.color.edgeColor));
                         edgeCount++;
                     }
                 }
             }
         }
+    }
+
+    // generate edge weight
+    private int genEdgeWeight() {
+        Random w = new Random();
+        int newWeight = w.nextInt(30);
+
+        if (!edgeWeights.isEmpty()) {
+            while (edgeWeights.contains(newWeight)) {
+                newWeight = w.nextInt(30);
+            }
+        }
+
+        edgeWeights.add(newWeight);
+        return newWeight;
     }
 
     // get node by label
@@ -214,6 +236,11 @@ public class Graph {
 
     // draws the graph
     public void draw() {
+        draw(this.edges);
+    }
+
+    // draws the graph with the provided edges
+    public void draw(Edge[] edges) {
         // draw all nodes
         for (int i=0; i<nodes.length; i++) {
             nodes[i].draw();

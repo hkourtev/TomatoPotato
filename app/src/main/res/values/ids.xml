@@ -5,4 +5,5 @@
     <item name="btnGoToStatsAct" type="id" />
     <item name="btnExit" type="id" />
     <item name="learnActCanvasId" type="id" />
+    <item name="btnLearnProceed" type="id" />
 </resources>
