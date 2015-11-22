@@ -34,16 +34,35 @@ public class Node {
         radius = rad;
         position = pos;
         nodeColor = new Paint();
-        this.parent = parent;
+        //make it parent.
+        this.parent = this;
         setNodeColor(color);
+
     }
 
     // draw node
     public void draw() {
         // draw the circle
         canvas.drawCircle(position.x, position.y, (float)radius, nodeColor);
+        Paint text = new Paint();
+        text.setTextSize(30);
+        canvas.drawText(label, position.x, position.y, text);
+        if(this.parent == this){
+            Paint line = new Paint();
+            line.setStyle(Paint.Style.STROKE);
+            line.setStrokeWidth(7);
+            line.setColor(0xFFAA0000);
+            /* for drawing a rectangle
+            line.setStrokeWidth(7);
+            line.setColor(0xffff0000);
 
-        // draw label/node name, value, etc
+            canvas.drawLine((int)(position.x - radius - 15), (int)(position.y -radius - 15), (int)(position.x - radius-15), (int)(position.y + radius + 15), line);
+            canvas.drawLine((int)(position.x - radius - 15), (int)(position.y - radius - 15), (int)(position.x + radius + 15), (int)(position.y - radius - 15), line);
+            canvas.drawLine((int)(position.x - radius - 15), (int)(position.y + radius + 15), (int)(position.x + radius + 15), (int)(position.y + radius + 15), line);
+            canvas.drawLine((int)(position.x + radius + 15), (int)(position.y -radius - 15), (int)(position.x + radius + 15), (int)(position.y + radius + 15), line);
+            */
+            canvas.drawCircle(position.x, position.y, (float)radius + 10, line);
+        }
     }
 
     // whenever we need to select node

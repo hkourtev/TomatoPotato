@@ -74,6 +74,13 @@ public class Edge {
             // need to draw an arrow at the end
         }
 
+        Paint text = new Paint();
+        text.setTextSize(32);
+        int x = (startLocation.x + endLocation.x)/2;
+        int y = (startLocation.y + endLocation.y)/2;
+
+        canvas.drawText((int)weight + " ", x + 15, y + 15, text);
+
         // draw weight, and so on
     }
 
