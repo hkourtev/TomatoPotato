@@ -10,14 +10,17 @@ import android.graphics.Point;
  * Created by hkourtev on 11/12/15.
  */
 public class Edge {
-    private Canvas canvas;
+    private Canvas canvas;          // reference to the layout contrainer (drawing surface) in activity
 
-    public Boolean directed;
-    public float weight;
-    public float lineThickness;
-    public Point startLocation;
-    public Point endLocation;
-    public Paint lineColor;
+    public Boolean directed;        // whether edge is directed
+    public float weight;            // weight or capacity
+    public float lineThickness;     // edge line thicness in pixels
+    public Point startLocation;     // line start coordinates
+    public Point endLocation;       // line end coordinates
+    public Paint lineColor;         // line color
+
+    public Node startNode;                  // start node
+    public Node endNode;                  // end node
 
     // blank constructor
     public Edge() {
@@ -31,6 +34,8 @@ public class Edge {
         directed = isDirected;
         weight = edgeWeight;
         lineColor = new Paint();
+        this.startNode = startNode;
+        this.endNode = endNode;
         initEdgeCoord(startNode, endNode);
         setLineColor(edgeColor);
         setLineThickness(edgeLineThickness);

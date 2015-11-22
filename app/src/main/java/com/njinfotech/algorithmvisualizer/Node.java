@@ -14,9 +14,10 @@ public class Node {
 
     public String label;
     public double value;
+    public int rank;
     public double radius;
-    public Boolean root;
 
+    public Node parent;
     public Paint nodeColor;
     public Point position;
 
@@ -25,14 +26,15 @@ public class Node {
 
     }
 
-    public Node(Canvas canv, String lbl, double val, double rad, Boolean isRoot, int color, Point pos) {
+    public Node(Canvas canv, String lbl, int rnk, double val, double rad, int color, Point pos, Node parent) {
         canvas = canv;
         label = lbl;
         value = val;
+        rank = rnk;
         radius = rad;
-        root = isRoot;
         position = pos;
         nodeColor = new Paint();
+        this.parent = parent;
         setNodeColor(color);
     }
 

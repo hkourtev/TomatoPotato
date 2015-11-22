@@ -23,7 +23,7 @@ public class Graph {
     public Boolean directed;
     public Edge[] edges;
     public Node[] nodes;
-    public Boolean[][] adjMatrix;
+    public int[][] adjMatrix;
     public int[] margins;   // 0 = left margin, 1 = top margin, 2 = right margin, 3 = bottom
 
     private Point screenSize;
@@ -58,6 +58,62 @@ public class Graph {
     }
 
     // generate pseudo-random graph
+    public enum Direction {
+        E, NE, N, NW, W, SW, S, SE
+    }
+
+    public void generate(int numNodes, int[][]tmpEdgeList, int radius, int[] screenMargins, Boolean isDirected) {
+        directed = isDirected;
+        margins = screenMargins;
+        int numEdges = tmpEdgeList.length;
+
+        // instantiate nodes and edges
+        nodes = new Node[numNodes];
+        edges = new Edge[numEdges];
+
+        // generate starting adjacency matrix - set to all =false
+        adjMatrix = new int[numNodes][numNodes];
+        for (int k=0; k<numNodes; k++) {
+            for (int m=0; m<numNodes; m++) {
+                adjMatrix[k][m] = -1000000;
+            }
+        }
+
+        // set true for edges that exist
+        for (int k=0; k<numEdges; k++) {
+            adjMatrix[tmpEdgeList[k][0]][tmpEdgeList[k][1]] = tmpEdgeList[k][2];
+            adjMatrix[tmpEdgeList[k][1]][tmpEdgeList[k][0]] = tmpEdgeList[k][2];
+        }
+
+        // create nodes
+        Point tmpPnt = new Point(0,0);
+        for (int k=0; k<numNodes; k++) {
+            nodes[k] = new Node(canvas, Integer.toString(k), 0, 0, radius, act.getResources().getColor(R.color.nodeColor), tmpPnt, null);
+        }
+
+        // loop over the adjacency matrix and create edges
+        int edgeCount=0;
+        for (int p=0; p<numNodes; p++) {
+            if (directed) {
+                // create all edges
+                for (int h = 0; h < numNodes; h++) {
+                    if (adjMatrix[p][h] != -1000000) {
+                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, adjMatrix[p][h], 5, act.getResources().getColor(R.color.edgeColor));
+                        edgeCount++;
+                    }
+                }
+            } else {
+                // use only half of adj matrix
+                for (int h=p; h<numNodes; h++) {
+                    if (adjMatrix[p][h] != -1000000) {
+                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, adjMatrix[p][h], 5, act.getResources().getColor(R.color.edgeColor));
+                        edgeCount++;
+                    }
+                }
+            }
+        }
+    }
+
     public void generate(int numRows, int numCols, int radius, int[] screenMargins, int jitter, Boolean isDirected) {
         directed = isDirected;
         margins = screenMargins;
@@ -92,16 +148,16 @@ public class Graph {
         int numEdges = tmpEdgeList.length;
 
         // generate starting adjacency matrix - set to all =false
-        adjMatrix = new Boolean[numNodes][numNodes];
+        adjMatrix = new int[numNodes][numNodes];
         for (int k=0; k<numNodes; k++) {
             for (int m=0; m<numNodes; m++) {
-                adjMatrix[k][m] = false;
+                adjMatrix[k][m] = -1000000;
             }
         }
 
         // set true for edges that exist
         for (int k=0; k<numEdges; k++) {
-            adjMatrix[tmpEdgeList[k][0]][tmpEdgeList[k][1]] = true;
+            adjMatrix[tmpEdgeList[k][0]][tmpEdgeList[k][1]] = 1;
         }
 
         // remove some nodes
@@ -122,7 +178,7 @@ public class Graph {
 
         // create nodes
         for (int k=0; k<numNodes; k++) {
-            nodes[k] = new Node(canvas, Integer.toString(k), 0, radius, false, act.getResources().getColor(R.color.nodeColor), nodePostions[k]);
+            nodes[k] = new Node(canvas, Integer.toString(k), 0, 0, radius, act.getResources().getColor(R.color.nodeColor), nodePostions[k], null);
         }
 
         // loop over the adjacency matrix and create edges
@@ -131,7 +187,7 @@ public class Graph {
             if (directed) {
                 // create all edges
                 for (int h = 0; h < numNodes; h++) {
-                    if (adjMatrix[p][h]) {
+                    if (adjMatrix[p][h] != -1000000) {
                         edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, 0, 5, act.getResources().getColor(R.color.edgeColor));
                         edgeCount++;
                     }
@@ -139,32 +195,13 @@ public class Graph {
             } else {
                 // use only half of adj matrix
                 for (int h=p; h<numNodes; h++) {
-                    if (adjMatrix[p][h]) {
+                    if (adjMatrix[p][h] != -1000000) {
                         edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, 0, 5, act.getResources().getColor(R.color.edgeColor));
                         edgeCount++;
                     }
                 }
             }
         }
-    }
-
-    // just to test if basic drawing works
-    public void generateTest() {
-        nodes = new Node[2];
-        edges = new Edge[1];
-
-        Point tmpNodePosA = new Point();
-        Point tmpNodePosB = new Point();
-
-        tmpNodePosA.x = 200;
-        tmpNodePosA.y = 200;
-        nodes[0] = new Node(canvas, "A", 0, 100, false, act.getResources().getColor(R.color.colorGreen), tmpNodePosA);
-
-        tmpNodePosB.x = 400;
-        tmpNodePosB.y = 500;
-        nodes[1] = new Node(canvas, "B", 0, 100, false, act.getResources().getColor(R.color.colorRed), tmpNodePosB);
-
-        edges[0] = new Edge(canvas, nodes[0], nodes[1], false, 0, 5, act.getResources().getColor(R.color.colorPrimary));
     }
 
     // draws the graph
