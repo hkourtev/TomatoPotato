@@ -1,5 +1,7 @@
 package com.njinfotech.algorithmvisualizer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -7,33 +9,93 @@ import java.util.Random;
  */
 public class AlgoKruskal {
 
-    public void MakeSet(Node x)
-    {
+    public List<Step> steps;
+    public List<Integer> MSTEdges;
+    public Graph G;
+
+    // -----------------------------------CONSTRUCTORS ---------------------------------------------
+    // when first running algorithm pass graph
+    public AlgoKruskal(Graph graph) {
+        G = graph;
+        steps = new ArrayList<Step>();
+        MSTEdges = new ArrayList<Integer>();
+    }
+
+    // used when replaying algorithm step by step, pass fresh graph and steps list
+    public AlgoKruskal(Graph graph, List<Step> algoSteps) {
+        G = graph;
+        steps = algoSteps;
+    }
+
+    // ----------------------------------STEP FUNCTIONS---------------------------------------------
+    public void _MakeSet(String nodeName) {
+        MakeSet(G.getNode(nodeName));
+    }
+
+    public void _Union(String root1, String root2) {
+        Link(G.getNode(root1), G.getNode(root2));
+    }
+
+    public void _IncreaseRank(String nodeName) {
+        G.getNode(nodeName).rank++;
+    }
+
+    public void _SortEdges() {
+        SortEdges(G.edges, 0, G.edges.length - 1);
+    }
+
+    public void _AddMSTEdge(String edgeIndex) {
+        AddMSTEdge(Integer.parseInt(edgeIndex));
+    }
+
+    public void _Dummy() {
+        // dummy fn that does nothing in order to be able to skip a step but still go through it and
+        // display its description
+    }
+
+
+
+    // ------------------------------REGULAR ALGORIHTM FUNCTIONS------------------------------------
+    public void MakeSet(Node x) {
         x.parent = x;
         x.rank = 0;
     }
 
     public void Union(Node x, Node y)
     {
+        Node xRoot = FindSet(x);
+        Node yRoot = FindSet(y);
+
+        if (xRoot.rank > yRoot.rank) {
+            // x root rank > y root rank, no need to increment
+            Link(xRoot, yRoot);
+        } else {
+            if (xRoot.rank == yRoot.rank) {
+                // unite
+                Link(xRoot, yRoot);
+                steps.add(new Step("_Union", new String[] {xRoot.label,yRoot.label},
+                        "Unite the sets that node " + x.label + " belongs to (tree with root " +
+                                xRoot.label + ") and " + y.label + " belongs to (tree with root " +
+                                yRoot.label + ") by making node " + xRoot.label +
+                                " parent of node " + yRoot.label, true, false));
+
+                // x root rank == y root rank, increase x root rank by 1
+                xRoot.rank++;
+                steps.add(new Step("_IncreaseRank", new String[] {xRoot.label}, "Since the root of the parent tree (node " +
+                        xRoot.label + ") has the same rank as the root of the tree being appended (node " +
+                        yRoot.label + "), we increase the rank of node " + xRoot.label, false, false));
+            }
+            else {
+                // y root rank > x root rank, make y parent of x
+                Link(yRoot, xRoot);
+            }
+        }
         Link(FindSet(x), FindSet(y));
     }
 
     public void Link(Node x, Node y)
     {
-        if (x.rank > y.rank)
-        {
-            y.parent = x;
-        }
-
-        else
-        {
-            x.parent = y;
-
-            if(x.rank == y.rank)
-            {
-                y.rank = y.rank + 1;
-            }
-        }
+        y.parent = x;
     }
 
     public Node FindSet(Node x)
@@ -44,7 +106,6 @@ public class AlgoKruskal {
         }
         return x.parent;
     }
-
 
     // Randomized QuickSort Start
     public int Partition(Edge[] A, int p, int r)
@@ -85,7 +146,6 @@ public class AlgoKruskal {
         return Partition(A, p, r);
     }
 
-
     public void SortEdges(Edge[] A, int p, int r)
     {
         if(p < r)
@@ -94,33 +154,55 @@ public class AlgoKruskal {
             SortEdges(A, p, q-1);
             SortEdges(A, q+1, r);
         }
-
-
     }
     // Randomized QuickSort End
 
+    public void AddMSTEdge(int edgeIndex) {
+        MSTEdges.add(edgeIndex);
+    }
 
-    public int MST(Edge[] MSTEdges, Graph G)
+    // execute algorithm and generate MST edges list and steps along the way
+    public void MST()
     {
+        // make a set for each node
         for (int i = 0; i < G.nodes.length; i++)
         {
             MakeSet(G.nodes[i]);
+            // if last step add pause
+            if (i == G.nodes.length-1)
+                steps.add(new Step("_MakeSet", new String[] {G.nodes[i].label},
+                        "Create set of 1 with root node " + G.nodes[i].label, true, false));
+            else
+                steps.add(new Step("_MakeSet", new String[] {G.nodes[i].label},
+                        "Create set of 1 with root node " + G.nodes[i].label, false, false));
         }
 
-        SortEdges(G.edges, 0, G.edges.length - 1 );
+        // sort edges
+        _SortEdges();
+        steps.add(new Step("_SortEdges", new String[] {},
+                "Sort all graph edges by weight in ascending order", true, false));
 
-        int k=0;
-
-        for (int i = 0; i < G.edges.length; i++)
-        {
-            if(FindSet(G.edges[i].startNode) != FindSet(G.edges[i].endNode))
-            {
-                MSTEdges[k] = G.edges[i];
-                k++;
+        for (int i = 0; i < G.edges.length; i++) {
+            if(FindSet(G.edges[i].startNode) != FindSet(G.edges[i].endNode)) {
+                // add edge to the MST 
+                AddMSTEdge(i);
+                steps.add(new Step("_AddMSTEdge", new String[] {Integer.toString(i)}, "Adding edge (" +
+                        G.edges[i].startNode.label + "," + G.edges[i].endNode.label +
+                        ") to the list of Minimum Spanning Tree edges", false, false));
+                
+                // unite sets - steps for union added inside function
                 Union(G.edges[i].startNode, G.edges[i].endNode);
+            } else {
+                steps.add(new Step("_Dummy", new String[] {}, "Nodes " +
+                        G.edges[i].startNode.label + " and " + G.edges[i].endNode.label +
+                        " belong to the same set so we cannot unite the sets that they belong to. " +
+                        "Skipping this edge.", true, false));
             }
         }
 
-        return k;
+        // done
+        steps.add(new Step("_Dummy()", new String[] {}, "We have now explored all edges and our " +
+                "Minimum Weight Spanning Tree, generated by using Kruskal's algorithm is ready. " +
+                "Press Proceed to draw the Minimum Weight Spanning Tree", true, false));
     }
 }

@@ -19,8 +19,8 @@ public class Edge {
     public Point endLocation;       // line end coordinates
     public Paint lineColor;         // line color
 
-    public Node startNode;                  // start node
-    public Node endNode;                  // end node
+    public Node startNode;          // start node
+    public Node endNode;            // end node
 
     // blank constructor
     public Edge() {

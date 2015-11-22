@@ -204,6 +204,14 @@ public class Graph {
         }
     }
 
+    // get node by label
+    public Node getNode(String lbl) {
+        for (int j=0; j<nodes.length; j++) {
+            if (nodes[j].label == lbl) return nodes[j];
+        }
+        return null;
+    }
+
     // draws the graph
     public void draw() {
         // draw all nodes
