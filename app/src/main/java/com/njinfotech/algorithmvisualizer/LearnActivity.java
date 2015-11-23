@@ -28,33 +28,20 @@ public class LearnActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
 
-        commandWindow = (TextView)findViewById(R.id.textView);
+        commandWindow = (TextView)findViewById(R.id.learnActTextViewId);
 
         // upon loading draw a test graph to see if everything is working
         myGraph = new Graph(this, R.id.learnActCanvasId);
 
-        // ------------------------ KRUSKAL's -----------------------------------------------------
-        // generate graph from adjacency list
-        // {u,v,weight}
-        /*int tmpAdjList[][] = {{0,1,4}, {0,7,8}, {1,2,8}, {1,7,11},
-                {2,3,7}, {2,5,4}, {2,8,2}, {3,4,9}, {3,5,14}, {4,5,10},
-                {5,6,2}, {6,7,1}, {6,8,6}, {7,8,7}};
-
-        // generate graph for kruskal's algorithm
-        myGraph.generate(9, tmpAdjList, 100, new int[] {150, 150, 450, 150}, false);
-        */
+        // generate graph and draw graph and wait till user proceeds
         myGraph.generate(false);
-
-        // draw graph and wait till user proceeds
         myGraph.draw();
 
         // execute algorithm
         kruskal = new AlgoKruskal(myGraph);
-
-
         kruskal.MST();
 
-        // reinitialize algorithm with fresh graph and steps
+        // reinitialize algorithm with fresh graph and steps & wait for input
         kruskal = new AlgoKruskal(myGraph, kruskal.steps);
     }
 
@@ -67,13 +54,17 @@ public class LearnActivity extends AppCompatActivity {
         }
     }
 
+    public void quitActivity(View view) {
+        this.finish();
+    }
+
     private void graphReset(Graph g){
         for(Node n: g.nodes){
             n.parent = null;
         }
         kruskal.MSTEdges.clear();
-
     }
+
     public void previousStep(View view) {
         if(currStep > 1){
         graphReset(myGraph);

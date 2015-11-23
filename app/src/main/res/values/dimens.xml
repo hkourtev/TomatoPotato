@@ -1,17 +1,36 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="activityMainHorizontalMargin">16dp</dimen>
+    <dimen name="activityMainVerticalMargin">16dp</dimen>
+    <dimen name="activityMainLinLayWidth">250dp</dimen>
+    <dimen name="activityMainBtnTxtSize">30sp</dimen>
+
+    <dimen name="activityLearnPaddingLeft">16dp</dimen>
+    <dimen name="activityLearnPaddingTop">16dp</dimen>
+    <dimen name="activityLearnPaddingRight">16dp</dimen>
+    <dimen name="activityLearnPaddingBottom">16dp</dimen>
+    <dimen name="activityLearnLinLayWidth">250dp</dimen>
+    <dimen name="activityLearnTextViewPad">5dp</dimen>
+    <dimen name="activityLearnBtnTxtSize">30sp</dimen>
+
+    <dimen name="activityTestPaddingLeft">16dp</dimen>
+    <dimen name="activityTestPaddingTop">16dp</dimen>
+    <dimen name="activityTestPaddingRight">16dp</dimen>
+    <dimen name="activityTestPaddingBottom">16dp</dimen>
+    <dimen name="activityTestLinLayWidth">250dp</dimen>
+    <dimen name="activityTestTextViewPad">5dp</dimen>
+    <dimen name="activityTestBtnTxtSize">30sp</dimen>
 
     <!-- Graph parameters -->
     <integer name="graphNumRows">3</integer>
     <integer name="graphNumCols">4</integer>
     <integer-array name="screenMargins">
-        <item>450</item>,
-        <item>150</item>,
-        <item>150</item>,
-        <item>250</item>
+        <item>400</item>,
+        <item>100</item>,
+        <item>100</item>,
+        <item>100</item>
     </integer-array>
     <integer name="numNodesToRemove">3</integer>
     <integer name="numEdgesToRemove">7</integer>

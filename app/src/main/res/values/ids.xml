@@ -5,5 +5,15 @@
     <item name="btnGoToStatsAct" type="id" />
     <item name="btnExit" type="id" />
     <item name="learnActCanvasId" type="id" />
-    <item name="btnLearnProceed" type="id" />
+    <item name="learnActTextViewId" type="id" />
+    <item name="btnLearnNextStep" type="id" />
+    <item name="btnLearnPrevStep" type="id" />
+    <item name="btnLearnQuit" type="id" />
+
+    <item name="testActCanvasId" type="id" />
+    <item name="testActTextViewId" type="id" />
+    <item name="btnTestCancel" type="id" />
+    <item name="btnTestUnion" type="id" />
+    <item name="btnTestCheck" type="id" />
+    <item name="btnTestQuit" type="id" />
 </resources>

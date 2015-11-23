@@ -4,7 +4,16 @@
     <string name="btnGoToTestAct">Test</string>
     <string name="btnGoToStatsAct">Statistics</string>
     <string name="btnExit">Exit</string>
-    <string name="btnLearnProceed">Proceed</string>
+    <string name="btnLearnNextStep">NEXT</string>
+    <string name="btnLearnPrevStep">PREVIOUS</string>
+    <string name="btnLearnQuit">QUIT</string>
+
+    <string name="btnTestCancel">CANCEL</string>
+    <string name="btnTestQuit">QUIT</string>
+    <string name="txtViewAvailOpt">ACTIONS:</string>
+    <string name="btnTestUnion">UNION(_,_)</string>
+    <string name="btnTestCheck">CHECK STEP</string>
+
     <string name="title_activity_learn">Learn Activity</string>
     <string name="title_activity_test">Test Activity</string>
 </resources>

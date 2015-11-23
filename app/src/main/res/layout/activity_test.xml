@@ -1,19 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
+xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:paddingLeft="@dimen/activityTestPaddingLeft"
+android:paddingRight="@dimen/activityTestPaddingRight"
+android:paddingTop="@dimen/activityTestPaddingTop"
+android:paddingBottom="@dimen/activityTestPaddingBottom"
+android:id="@id/testActCanvasId"
+tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
+
+<LinearLayout
+    android:layout_width="@dimen/activityTestLinLayWidth"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/activityTestBtnTxtSize"
+        android:gravity="center"
+        android:padding="@dimen/activityTestTextViewPad"
+        android:text="@string/txtViewAvailOpt" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnTestUnion"
+        android:textSize="@dimen/activityTestBtnTxtSize"
+        android:id="@id/btnTestUnion"
+        android:onClick="beginUnionStep" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnTestCheck"
+        android:textSize="@dimen/activityTestBtnTxtSize"
+        android:id="@id/btnTestCheck"
+        android:onClick="checkStep" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnTestCancel"
+        android:textSize="@dimen/activityTestBtnTxtSize"
+        android:id="@id/btnTestCancel"
+        android:onClick="cancelStep" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/activityTestTextViewPad"
+        android:text="" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnTestQuit"
+        android:textSize="@dimen/activityTestBtnTxtSize"
+        android:id="@id/btnTestQuit"
+        android:onClick="quitActivity" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/testActTextViewBack"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textView3"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:gravity="center"
+        android:padding="@dimen/activityTestTextViewPad"
+        android:text=""
+        android:id="@id/testActTextViewId" />
+
+
+</LinearLayout>
+
 </RelativeLayout>

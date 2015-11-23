@@ -15,4 +15,7 @@
     <color name="edgeWeightFontColorBorder">#000000</color>
     <color name="nodeLabelFontColor">#000000</color>
     <color name="nodeRankFontColor">#000000</color>
+
+    <color name="learnActTextViewBack">#d5fcce</color>
+    <color name="testActTextViewBack">#d5fcce</color>
 </resources>
