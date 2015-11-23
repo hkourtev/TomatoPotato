@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import java.lang.reflect.Method;
 
@@ -58,7 +59,7 @@ public class LearnActivity extends AppCompatActivity {
     public void executeStep(int p) {
         // execute step using reflection
         try {
-            Method method = kruskal.getClass().getMethod(kruskal.steps.get(p).command);
+            Method method = kruskal.getClass().getMethod(kruskal.steps.get(p).command, kruskal.steps.get(p).parameters);
 
             switch (kruskal.steps.get(p).arguments.length) {
                 case 0:
@@ -67,18 +68,21 @@ public class LearnActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    break;
                 case 1:
                     try {
                         method.invoke(kruskal, kruskal.steps.get(p).arguments[0]);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    break;
                 case 2:
                     try {
                         method.invoke(kruskal, kruskal.steps.get(p).arguments[0], kruskal.steps.get(p).arguments[1]);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    break;
             }
 
         } catch (Exception e) {
@@ -86,12 +90,14 @@ public class LearnActivity extends AppCompatActivity {
         }
 
         // display message
+        Log.d("LearnActivity", kruskal.steps.get(p).description);
+
         Edge[] mstEdges = new Edge[kruskal.MSTEdges.size()];
         for (int j=0; j<kruskal.MSTEdges.size(); j++) {
             mstEdges[j] = kruskal.G.edges[j];
         }
 
         // draw trees
-        //kruskal.G.draw(mstEdges);
+        kruskal.G.draw(mstEdges);
     }
 }
