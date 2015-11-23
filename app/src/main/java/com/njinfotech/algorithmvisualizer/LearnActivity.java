@@ -5,8 +5,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
 import java.lang.reflect.Method;
 
 
@@ -16,10 +21,14 @@ public class LearnActivity extends AppCompatActivity {
     AlgoKruskal kruskal;
     int currStep = 0;
 
+    public TextView commandWindow;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_learn);
+
+        commandWindow = (TextView)findViewById(R.id.textView);
 
         // upon loading draw a test graph to see if everything is working
         myGraph = new Graph(this, R.id.learnActCanvasId);
@@ -34,7 +43,7 @@ public class LearnActivity extends AppCompatActivity {
         // generate graph for kruskal's algorithm
         myGraph.generate(9, tmpAdjList, 100, new int[] {150, 150, 450, 150}, false);
         */
-        myGraph.generate(3, 4, 70, new int[]{150, 150, 450, 150}, 100, false);
+        myGraph.generate(3, 4, 70, new int[]{150, 150, 450, 250}, 100, false);
 
         // draw graph and wait till user proceeds
         myGraph.draw();
@@ -90,7 +99,7 @@ public class LearnActivity extends AppCompatActivity {
         }
 
         // display message
-        Log.d("LearnActivity", kruskal.steps.get(p).description);
+        commandWindow.setText(kruskal.steps.get(p).description);
 
         Edge[] mstEdges = new Edge[kruskal.MSTEdges.size()];
         for (int j=0; j<kruskal.MSTEdges.size(); j++) {
