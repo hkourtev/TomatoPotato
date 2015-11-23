@@ -50,6 +50,8 @@ public class LearnActivity extends AppCompatActivity {
 
         // execute algorithm
         kruskal = new AlgoKruskal(myGraph);
+
+
         kruskal.MST();
 
         // reinitialize algorithm with fresh graph and steps
@@ -57,17 +59,39 @@ public class LearnActivity extends AppCompatActivity {
     }
 
     public void nextStep(View view) {
+
+
         if (currStep < kruskal.steps.size()) {
             // run currStep
-            executeStep(currStep);
+
+
+            executeStep(currStep, false);
 
             currStep++;
         }
     }
 
-    public void executeStep(int p) {
+    private void graphReset(Graph g){
+        for(Node n: g.nodes){
+            n.parent = null;
+        }
+        kruskal.MSTEdges.clear();
+
+    }
+    public void previousStep(View view) {
+        if(currStep > 1){
+        graphReset(myGraph);
+        currStep--;
+        for(int i = 0; i < currStep - 1; i++)
+            executeStep(i, true);
+
+        executeStep(currStep - 1, false);}
+    }
+
+    public void executeStep(int p, boolean supressMessage) {
         // execute step using reflection
         try {
+
             Method method = kruskal.getClass().getMethod(kruskal.steps.get(p).command, kruskal.steps.get(p).parameters);
 
             switch (kruskal.steps.get(p).arguments.length) {
@@ -99,11 +123,13 @@ public class LearnActivity extends AppCompatActivity {
         }
 
         // display message
-        commandWindow.setText(kruskal.steps.get(p).description);
+        if(!supressMessage) {
+            commandWindow.setText(kruskal.steps.get(p).description);
+        }
 
         Edge[] mstEdges = new Edge[kruskal.MSTEdges.size()];
         for (int j=0; j<kruskal.MSTEdges.size(); j++) {
-            mstEdges[j] = kruskal.G.edges[j];
+            mstEdges[j] = kruskal.G.edges[kruskal.MSTEdges.get(j)];
         }
 
         // draw trees

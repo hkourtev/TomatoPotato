@@ -17,7 +17,7 @@ public class Node {
     public int rank;
     public double radius;
 
-    public Node parent;
+    public Node parent = null;
     public Paint nodeColor;
     public Point position;
 
@@ -35,7 +35,7 @@ public class Node {
         position = pos;
         nodeColor = new Paint();
         //make it parent.
-        this.parent = this;
+
         setNodeColor(color);
 
     }
@@ -43,10 +43,11 @@ public class Node {
     // draw node
     public void draw() {
         // draw the circle
-        canvas.drawCircle(position.x, position.y, (float)radius, nodeColor);
+        canvas.drawCircle(position.x, position.y, (float) radius, nodeColor);
         Paint text = new Paint();
         text.setTextSize(30);
-        canvas.drawText(label, position.x, position.y, text);
+        String x = parent == null ? "" : this.parent.label;
+        canvas.drawText(label  + " " + x + " " + rank, position.x, position.y, text);
         if(this.parent == this){
             Paint line = new Paint();
             line.setStyle(Paint.Style.STROKE);

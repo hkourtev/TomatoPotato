@@ -26,6 +26,9 @@ public class AlgoKruskal {
         G = graph;
         steps = algoSteps;
         MSTEdges = new ArrayList<Integer>();
+        for(int i = 0; i < G.nodes.length;i++){
+            G.nodes[i].parent = null;
+        }
     }
 
     // ----------------------------------STEP FUNCTIONS---------------------------------------------
@@ -70,6 +73,12 @@ public class AlgoKruskal {
         if (xRoot.rank > yRoot.rank) {
             // x root rank > y root rank, no need to increment
             Link(xRoot, yRoot);
+            steps.add(new Step("_Union", new Class[]{String.class, String.class}, new String[]{xRoot.label, yRoot.label},
+                    "Unite the sets that node " + x.label + " belongs to (tree with root " +
+                            xRoot.label + ") and " + y.label + " belongs to (tree with root " +
+                            yRoot.label + ") by making node " + xRoot.label +
+                            " parent of node " + yRoot.label, true, false));
+
         } else {
             if (xRoot.rank == yRoot.rank) {
                 // unite
@@ -89,6 +98,12 @@ public class AlgoKruskal {
             else {
                 // y root rank > x root rank, make y parent of x
                 Link(yRoot, xRoot);
+                steps.add(new Step("_Union", new Class[]{String.class, String.class}, new String[]{yRoot.label, xRoot.label},
+                        "Unite the sets that node " + y.label + " belongs to (tree with root " +
+                                yRoot.label + ") and " + x.label + " belongs to (tree with root " +
+                                xRoot.label + ") by making node " + yRoot.label +
+                                " parent of node " + xRoot.label, true, false));
+
             }
         }
     }
@@ -165,15 +180,11 @@ public class AlgoKruskal {
     public void MST()
     {
         // make a set for each node
+
         for (int i = 0; i < G.nodes.length; i++)
         {
             MakeSet(G.nodes[i]);
-            // if last step add pause
-            if (i == G.nodes.length-1)
-                steps.add(new Step("_MakeSet", new Class[] {String.class}, new String[] {G.nodes[i].label},
-                        "Create set of 1 with root node " + G.nodes[i].label, true, false));
-            else
-                steps.add(new Step("_MakeSet", new Class[] {String.class}, new String[] {G.nodes[i].label},
+            steps.add(new Step("_MakeSet", new Class[] {String.class}, new String[] {G.nodes[i].label},
                         "Create set of 1 with root node " + G.nodes[i].label, false, false));
         }
 
