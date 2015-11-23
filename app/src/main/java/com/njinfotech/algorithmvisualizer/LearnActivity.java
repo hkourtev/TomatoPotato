@@ -43,7 +43,7 @@ public class LearnActivity extends AppCompatActivity {
         kruskal = new AlgoKruskal(myGraph);
         kruskal.MST();
 
-        // reinitialize algrorithm with fresh graph and steps
+        // reinitialize algorithm with fresh graph and steps
         kruskal = new AlgoKruskal(myGraph, kruskal.steps);
     }
 
