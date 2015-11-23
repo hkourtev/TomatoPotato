@@ -242,11 +242,15 @@ public class Graph {
     // draws the graph with the provided edges
     public void draw(Edge[] edges) {
         // blank the canvas
-        //drawSpace.invalidate();
+        canvas.drawColor(Color.WHITE);
+        for(Node n: nodes){
+            n.draw();
+        }
+        /*
         Paint line = new Paint();
         line.setColor(0xFFFFFFFF);
         canvas.drawRect(0,0,screenSize.x-200, screenSize.y,line);
-
+    */
         // draw all nodes
         for (int i=0; i<nodes.length; i++) {
             nodes[i].draw();
