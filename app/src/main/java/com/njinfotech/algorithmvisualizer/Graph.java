@@ -8,12 +8,15 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Display;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -30,6 +33,7 @@ public class Graph {
     public Node[] nodes;
     public int[][] adjMatrix;
     public int[] margins;   // 0 = left margin, 1 = top margin, 2 = right margin, 3 = bottom
+    Point[] nodePostions;
 
     private Point screenSize;
     private Display display;
@@ -64,11 +68,8 @@ public class Graph {
         canvas = new Canvas(canvasBg);
     }
 
-    // generate pseudo-random graph
-    public enum Direction {
-        E, NE, N, NW, W, SW, S, SE
-    }
-
+    /*
+    // generate graph from provided adjacency list -- incomplete, node positions not calculated
     public void generate(int numNodes, int[][]tmpEdgeList, int radius, int[] screenMargins, Boolean isDirected) {
         directed = isDirected;
         margins = screenMargins;
@@ -119,29 +120,42 @@ public class Graph {
                 }
             }
         }
+    }*/
+
+    // simplified generate function which loads values from the resource files rather than pass manually
+    public void generate(Boolean isDirected) {
+        generate(act.getResources().getInteger(R.integer.graphNumRows),
+                act.getResources().getInteger(R.integer.graphNumCols),
+                act.getResources().getInteger(R.integer.nodeRadius),
+                act.getResources().getIntArray(R.array.screenMargins),
+                act.getResources().getInteger(R.integer.jitter),
+                isDirected);
     }
 
+    // generate a pseudo-random graph that fits well on our limited screen space
     public void generate(int numRows, int numCols, int radius, int[] screenMargins, int jitter, Boolean isDirected) {
+        // initialize variables
         directed = isDirected;
         margins = screenMargins;
-        int numNodesToRemove = 3;
+        int numNodesToRemove = act.getResources().getInteger(R.integer.numNodesToRemove);
+        int numEdgesToRemove = act.getResources().getInteger(R.integer.numEdgesToRemove);
+        int numEdgesToAdd = act.getResources().getInteger(R.integer.numEdgesToAdd);
 
-        Random jitterX = new Random();
-        Random jitterY = new Random();
+        Random randNumGen = new Random();
         int numNodes = numCols*numRows;     // num nodes = row x col
         Point nodeSpacing = new Point();
         nodeSpacing.x = (screenSize.x - numCols*radius*2 - margins[0] - margins[2])/(numCols-1);
         nodeSpacing.y = (screenSize.y - numRows*radius*2 - margins[1] - margins[3])/(numRows-1);
 
         // to store positions of the nodes
-        Point[] nodePostions = new Point[numNodes];
+        nodePostions = new Point[numNodes];
         for (int y = 0; y < numRows; y++) {
             for (int x=0; x<numCols; x++) {
                 // generate node positions to uniformly fit the space on the screen and
                 // add x and y direction jitter = -jitter to +jitter
                 nodePostions[y*numCols + x] = new Point();
-                nodePostions[y*numCols + x].x = margins[0] + (x*2+1)*radius + x*nodeSpacing.x + (jitterX.nextInt(jitter*2) - jitter);
-                nodePostions[y*numCols + x].y = margins[1] + (y*2+1)*radius + y*nodeSpacing.y + (jitterY.nextInt(jitter*2) - jitter);
+                nodePostions[y*numCols + x].x = margins[0] + (x*2+1)*radius + x*nodeSpacing.x + (randNumGen.nextInt(jitter*2) - jitter);
+                nodePostions[y*numCols + x].y = margins[1] + (y*2+1)*radius + y*nodeSpacing.y + (randNumGen.nextInt(jitter*2) - jitter);
             }
         }
 
@@ -168,8 +182,13 @@ public class Graph {
         }
 
         // remove some nodes
+        int numEdgesRemoved = 0;
+        for (int w=0; w<numNodesToRemove; w++) {
+            numEdges = numEdges - removeNode(randNumGen.nextInt(numNodes), numNodes);
+            numNodes--;
+        }
 
-        // remove some edges
+        // get rid of overlapping edges
 
         // add some random edges
 
@@ -185,7 +204,15 @@ public class Graph {
 
         // create nodes
         for (int k=0; k<numNodes; k++) {
-            nodes[k] = new Node(canvas, Integer.toString(k), 0, 0, radius, act.getResources().getColor(R.color.nodeColor), nodePostions[k], null);
+            nodes[k] = new Node(canvas, Integer.toString(k), 0, 0, radius,
+                    act.getResources().getColor(R.color.nodeFillColor),
+                    act.getResources().getColor(R.color.nodeBorderColor),
+                    act.getResources().getInteger(R.integer.nodeBorderThickness),
+                    act.getResources().getColor(R.color.nodeLabelFontColor),
+                    act.getResources().getInteger(R.integer.nodeLabelFontSize),
+                    act.getResources().getColor(R.color.nodeRankFontColor),
+                    act.getResources().getInteger(R.integer.nodeRankFontSize),
+                    nodePostions[k], null);
         }
 
         // loop over the adjacency matrix and create edges
@@ -195,7 +222,13 @@ public class Graph {
                 // create all edges
                 for (int h = 0; h < numNodes; h++) {
                     if (adjMatrix[p][h] != -1000000) {
-                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, genEdgeWeight(), 5, act.getResources().getColor(R.color.edgeColor));
+                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed,
+                                genEdgeWeight(),
+                                act.getResources().getInteger(R.integer.edgeLineThickness),
+                                act.getResources().getColor(R.color.edgeColor),
+                                act.getResources().getColor(R.color.edgeWeightFontColorFill),
+                                act.getResources().getColor(R.color.edgeWeightFontColorBorder),
+                                act.getResources().getInteger(R.integer.edgeWeightFontSize));
                         edgeCount++;
                     }
                 }
@@ -203,7 +236,13 @@ public class Graph {
                 // use only half of adj matrix
                 for (int h=p; h<numNodes; h++) {
                     if (adjMatrix[p][h] != -1000000) {
-                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, genEdgeWeight(), 5, act.getResources().getColor(R.color.edgeColor));
+                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed,
+                                genEdgeWeight(),
+                                act.getResources().getInteger(R.integer.edgeLineThickness),
+                                act.getResources().getColor(R.color.edgeColor),
+                                act.getResources().getColor(R.color.edgeWeightFontColorFill),
+                                act.getResources().getColor(R.color.edgeWeightFontColorBorder),
+                                act.getResources().getInteger(R.integer.edgeWeightFontSize));
                         edgeCount++;
                     }
                 }
@@ -211,7 +250,117 @@ public class Graph {
         }
     }
 
-    // generate edge weight
+    // remove node from adj matrix
+    // returns number of edges removed. edges that have a geographically opposing edges are
+    // combined so a combination only reduces the # of edges by 1
+    private int removeNode(int ind, int numNodes) {
+        // assuming node positions in matrix format
+        //  0   1   2   3
+        //  4   5   6   7
+        //  8   9   10  11
+
+        // get edges
+        List<Integer> neighbors = getNodeNeighbors(ind, numNodes);
+        int numEdgesRemoved = 0;
+        int[] edge1Dir, edge2Dir;
+        Boolean hasOpposing;
+
+        // take care of edges
+        // find every 2 opposing edges and connect them and if an edge doesn't have an opposing edge
+        // just remove it.
+        for (int f=neighbors.size()-1; f>=0; f--) {
+            // pick first edge - to neoughbor(f)
+            edge1Dir = getEdgeDirection(ind, neighbors.get(f));
+            hasOpposing = false;
+
+            // loop through the rest of the edges and see if we can find opposing edge
+            for (int l=neighbors.size()-1; l>=0; l--) {
+                if (l!=f) { // no point in testing same edge
+                    edge2Dir = getEdgeDirection(ind, neighbors.get(l));
+
+                    // test if opposing
+                    if (edge1Dir[0]+edge2Dir[0] == 0 && edge1Dir[1]+edge2Dir[1] == 0) { // opposing
+                        // connect nodes f->l and l->f in adj matrix
+                        adjMatrix[neighbors.get(f)][neighbors.get(l)] = 1;
+                        adjMatrix[neighbors.get(l)][neighbors.get(f)] = 1;
+
+                        // remove both neighbors from list
+                        hasOpposing = true;
+                        neighbors.remove(f); f--;
+                        neighbors.remove(l); l--;
+                        break;
+                    }
+                }
+            }
+
+            // if no opposing was found
+            if (!hasOpposing) { // remove neighbor f
+                neighbors.remove(f);
+            }
+
+            numEdgesRemoved++;
+        }
+
+        // update adj matrix
+        updateAdjMatrixRemoveNode(ind, numNodes);
+        updateNodePositionsRemoveNode(ind, numNodes);
+
+        Log.d("LearnActivity", "Removing node" + ind);
+
+        // return double the number since by default we have a directed graph
+        return numEdgesRemoved*2;
+    }
+
+    private void updateNodePositionsRemoveNode(int ind, int numNodes) {
+        Point[] nodePos = new Point[numNodes-1];
+
+        for (int u=0; u<numNodes-1; u++) {
+            if (u >= ind) {
+                nodePos[u] = nodePostions[u+1];
+            } else {
+                nodePos[u] = nodePostions[u];
+            }
+        }
+
+        nodePostions = nodePos;
+    }
+
+    // remove row and column = ind
+    private void updateAdjMatrixRemoveNode(int ind, int numNodes) {
+        int[][] adjMat = new int[numNodes-1][numNodes-1];
+
+        for (int u=0; u<numNodes-1; u++) {
+            for (int p=0; p<numNodes-1; p++) {
+                if (u >= ind && p >= ind) {
+                    adjMat[u][p] = adjMatrix[u+1][p+1];
+                } else {
+                    if (u >= ind) {
+                        adjMat[u][p] = adjMatrix[u+1][p];
+                    } else if (p >= ind) {
+                        adjMat[u][p] = adjMatrix[u][p+1];
+                    } else {
+                        adjMat[u][p] = adjMatrix[u][p];
+                    }
+                }
+            }
+        }
+
+        // replace adj matrix
+        adjMatrix = adjMat;
+    }
+
+    private List<Integer> getNodeNeighbors(int ind, int numNodes) {
+        List<Integer> neighbors = new ArrayList<Integer>();
+
+        for (int j=0; j<numNodes; j++) {
+            if (adjMatrix[ind][j] != -1000000) {
+                neighbors.add(j);
+            }
+        }
+        return neighbors;
+    }
+
+    // generate random edge weights which do not repeat
     private int genEdgeWeight() {
         Random w = new Random();
         int newWeight = w.nextInt(30);
@@ -224,6 +373,31 @@ public class Graph {
 
         edgeWeights.add(newWeight);
         return newWeight;
+    }
+
+    // get edge's geographical position
+    private int[] getEdgeDirection(int fromNode, int toNode) {
+        Point fPos = getNodePos(fromNode);
+        Point tPos = getNodePos(toNode);
+        int[] dir = new int[] {tPos.x - fPos.x, tPos.y - fPos.y};
+        return dir;
+    }
+
+    // get node position in terms of row and colum
+    private Point getNodePos(int nodeIndex) {
+        Point nodePos = new Point();
+
+        int numCols = act.getResources().getInteger(R.integer.graphNumCols);
+        int numRows = act.getResources().getInteger(R.integer.graphNumRows);
+        for (int y=0; y<numRows; y++) {
+            if (nodeIndex<(y+1)*numCols) {
+                nodePos.x = nodeIndex - numCols*y;
+                nodePos.y = y;
+                break;
+            }
+        }
+
+        return nodePos;
     }
 
     // get node by label
@@ -243,14 +417,7 @@ public class Graph {
     public void draw(Edge[] edges) {
         // blank the canvas
         canvas.drawColor(Color.WHITE);
-        for(Node n: nodes){
-            n.draw();
-        }
-        /*
-        Paint line = new Paint();
-        line.setColor(0xFFFFFFFF);
-        canvas.drawRect(0,0,screenSize.x-200, screenSize.y,line);
-    */
+
         // draw all nodes
         for (int i=0; i<nodes.length; i++) {
             nodes[i].draw();

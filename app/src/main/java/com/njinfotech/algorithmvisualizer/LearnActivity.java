@@ -43,7 +43,7 @@ public class LearnActivity extends AppCompatActivity {
         // generate graph for kruskal's algorithm
         myGraph.generate(9, tmpAdjList, 100, new int[] {150, 150, 450, 150}, false);
         */
-        myGraph.generate(3, 4, 70, new int[]{150, 150, 450, 250}, 100, false);
+        myGraph.generate(false);
 
         // draw graph and wait till user proceeds
         myGraph.draw();
@@ -59,12 +59,8 @@ public class LearnActivity extends AppCompatActivity {
     }
 
     public void nextStep(View view) {
-
-
         if (currStep < kruskal.steps.size()) {
             // run currStep
-
-
             executeStep(currStep, false);
 
             currStep++;

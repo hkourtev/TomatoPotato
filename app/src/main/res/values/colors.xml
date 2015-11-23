@@ -2,9 +2,17 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorRed">#c61212</color>
-    <color name="colorGreen">#21ac2f</color>
-    <color name="nodeColor">#9aeff7</color>
+    <color name="colorAccent">#efaee9</color>
+
+    <color name="nodeFillColor">#9aeff7</color>
+    <color name="nodeFillColorSelected1">#ef6f25</color>
+    <color name="nodeFillColorSelected2">#fcd164</color>
+    <color name="nodeBorderColor">#ff0008</color>
     <color name="edgeColor">#303F9F</color>
+    <color name="edgeColorExplored">#b4b4b4</color>
+    <color name="edgeColorNotExplored">#000000</color>
+    <color name="edgeWeightFontColorFill">#ffffff</color>
+    <color name="edgeWeightFontColorBorder">#000000</color>
+    <color name="nodeLabelFontColor">#000000</color>
+    <color name="nodeRankFontColor">#000000</color>
 </resources>

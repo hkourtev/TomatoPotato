@@ -18,7 +18,10 @@ public class Node {
     public double radius;
 
     public Node parent = null;
-    public Paint nodeColor;
+    public Paint nodeFill;
+    public Paint nodeBorder;
+    public Paint nodeLabel;
+    public Paint nodeRank;
     public Point position;
 
     // blank constructor - not assigning any values
@@ -26,60 +29,69 @@ public class Node {
 
     }
 
-    public Node(Canvas canv, String lbl, int rnk, double val, double rad, int color, Point pos, Node parent) {
+    public Node(Canvas canv, String lbl, int rnk, double val, double rad, int nodeFillColor,
+                int nodeBorderColor, int nodeBorderThickness, int nodeLabelFontColor,
+                int nodeLabelFontSize, int nodeRankFontColor, int nodeRankFontSize,
+                Point pos, Node prnt) {
         canvas = canv;
         label = lbl;
         value = val;
         rank = rnk;
         radius = rad;
         position = pos;
-        nodeColor = new Paint();
-        //make it parent.
+        nodeFill = new Paint();
+        nodeBorder = new Paint();
+        nodeLabel = new Paint();
+        nodeRank = new Paint();
+        parent = prnt;
 
-        setNodeColor(color);
-
+        setNodeFillColor(nodeFillColor);
+        setNodeBorderColor(nodeBorderColor, nodeBorderThickness);
+        setNodeLabelFont(nodeLabelFontColor, nodeLabelFontSize);
+        setNodeRankFont(nodeRankFontColor, nodeRankFontSize);
     }
 
     // draw node
     public void draw() {
-        // draw the circle
-        canvas.drawCircle(position.x, position.y, (float) radius, nodeColor);
-        Paint text = new Paint();
-        text.setTextSize(30);
-        String x = parent == null ? "" : this.parent.label;
-        canvas.drawText(label  + " " + x + " " + rank, position.x, position.y, text);
-        if(this.parent == this){
-            Paint line = new Paint();
-            line.setStyle(Paint.Style.STROKE);
-            line.setStrokeWidth(7);
-            line.setColor(0xFFAA0000);
-            /* for drawing a rectangle
-            line.setStrokeWidth(7);
-            line.setColor(0xffff0000);
+        // draw the node circle
+        canvas.drawCircle(position.x, position.y, (float) radius, nodeFill);
 
-            canvas.drawLine((int)(position.x - radius - 15), (int)(position.y -radius - 15), (int)(position.x - radius-15), (int)(position.y + radius + 15), line);
-            canvas.drawLine((int)(position.x - radius - 15), (int)(position.y - radius - 15), (int)(position.x + radius + 15), (int)(position.y - radius - 15), line);
-            canvas.drawLine((int)(position.x - radius - 15), (int)(position.y + radius + 15), (int)(position.x + radius + 15), (int)(position.y + radius + 15), line);
-            canvas.drawLine((int)(position.x + radius + 15), (int)(position.y -radius - 15), (int)(position.x + radius + 15), (int)(position.y + radius + 15), line);
-            */
-            canvas.drawCircle(position.x, position.y, (float)radius + 10, line);
+        // draw circle around node to signify it is a tree root
+        if(this.parent == this) {
+            canvas.drawCircle(position.x, position.y, (float)radius + 2, nodeBorder);
         }
+
+        // draw label
+        canvas.drawText(label, position.x, position.y + (float) (radius*0.7), nodeLabel);
+
+        // draw rank
+        canvas.drawText("r=" + rank, position.x, (float) (position.y - radius + radius*0.7), nodeRank);
     }
 
-    // whenever we need to select node
-    public void select() {
-
-    }
-
-    // set node color
     // pass the color id returned by act.getResources().getColor(R.color.{the color id})
-    public void setNodeColor(int newNodeColor) {
-        nodeColor.setColor(newNodeColor);
+    public void setNodeFillColor(int color) {
+        nodeFill.setColor(color);
     }
 
-    // for some algorithms nodes need to store a value
-    public void setValue(float newValue) {
-        value = newValue;
+    // pass the color id returned by act.getResources().getColor(R.color.{the color id})
+    public void setNodeBorderColor(int color, int borderThickness) {
+        nodeBorder.setColor(color);
+        nodeBorder.setStyle(Paint.Style.STROKE);
+        nodeBorder.setStrokeWidth(borderThickness);
+    }
+
+    // pass the color id returned by act.getResources().getColor(R.color.{the color id})
+    public void setNodeLabelFont(int color, int size) {
+        nodeLabel.setColor(color);
+        nodeLabel.setTextSize(size);
+        nodeLabel.setTextAlign(Paint.Align.CENTER);
+    }
+
+    // pass the color id returned by act.getResources().getColor(R.color.{the color id})
+    public void setNodeRankFont(int color, int size) {
+        nodeRank.setColor(color);
+        nodeRank.setTextSize(size);
+        nodeRank.setTextAlign(Paint.Align.CENTER);
     }
 
     // return # of neighbors - needs to access the adjacency matrix somehow

@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Typeface;
 
 /**
  * Created by hkourtev on 11/12/15.
@@ -17,7 +18,9 @@ public class Edge {
     public float lineThickness;     // edge line thicness in pixels
     public Point startLocation;     // line start coordinates
     public Point endLocation;       // line end coordinates
-    public Paint lineColor;         // line color
+    public Paint edgeLineColor;     // line color and stroke
+    public Paint edgeWeightColorFill;       // edge rank font and color
+    public Paint edgeWeightColorBorder;     // edge rank font and color
 
     public Node startNode;          // start node
     public Node endNode;            // end node
@@ -29,16 +32,21 @@ public class Edge {
 
     // constructor
     // pass the color id returned by act.getResources().getColor(R.color.{the color id})
-    public Edge(Canvas canv, Node startNode, Node endNode, Boolean isDirected, float edgeWeight, float edgeLineThickness, int edgeColor) {
+    public Edge(Canvas canv, Node startNode, Node endNode, Boolean isDirected,
+                float edgeWeight, float edgeLineThickness, int edgeColor,
+                int weightFontColorFill, int weightFontColorBorder, int weightFontSize) {
         canvas = canv;
         directed = isDirected;
         weight = edgeWeight;
-        lineColor = new Paint();
+        edgeLineColor = new Paint();
+        edgeWeightColorFill = new Paint();
+        edgeWeightColorBorder = new Paint();
+        lineThickness = edgeLineThickness;
         this.startNode = startNode;
         this.endNode = endNode;
         initEdgeCoord(startNode, endNode);
-        setLineColor(edgeColor);
-        setLineThickness(edgeLineThickness);
+        setEdgeColor(edgeColor, edgeLineThickness);
+        setEdgeWeightFont(weightFontColorFill, weightFontColorBorder, weightFontSize);
     }
 
     // initializes edge coordinates after node and everything else has been assigned
@@ -68,20 +76,30 @@ public class Edge {
     // draw the line to the screen
     public void draw() {
         // draw the line
-        canvas.drawLine(startLocation.x, startLocation.y, endLocation.x, endLocation.y, lineColor);
+        canvas.drawLine(startLocation.x, startLocation.y, endLocation.x, endLocation.y, edgeLineColor);
 
+        // need to draw an arrow at the end
         if (directed) {
-            // need to draw an arrow at the end
+
         }
 
-        Paint text = new Paint();
-        text.setTextSize(32);
-        int x = (startLocation.x + endLocation.x)/2;
-        int y = (startLocation.y + endLocation.y)/2;
+        // displace edge weight label so it is not on top of the edge
+        Point edgeMidPoint = new Point((startLocation.x + endLocation.x)/2,
+                (startLocation.y + endLocation.y)/2);
+        Point orthoVector = new Point(-(endLocation.y-startLocation.y), endLocation.x-startLocation.x);
+        double edgeLength = Math.sqrt(Math.pow(orthoVector.x,2) + Math.pow(orthoVector.y, 2));
+/*        Point displacement = new Point(edgeMidPoint.x +
+                (int)(((edgeVector.y)/edgeLength) < 0.5 ? (edgeVector.y*2)/edgeLength : (edgeVector.y)/edgeLength),
+                edgeMidPoint.y +
+                        (int)(((-edgeVector.x)/edgeLength) < 0.5 ? ((-edgeVector.x*2)/edgeLength) : ((-edgeVector.x)/edgeLength))); */
+        double dispX = (orthoVector.y)*lineThickness*5/edgeLength;
+        double dispY = (orthoVector.x)*lineThickness*5/edgeLength;
+        Point displacement = new Point((int)dispX + edgeMidPoint.x,
+                (int)dispY + edgeMidPoint.y);
 
-        canvas.drawText((int)weight + " ", x + 15, y + 15, text);
-
-        // draw weight, and so on
+        // draw weight
+        canvas.drawText((int)weight+"", edgeMidPoint.x, edgeMidPoint.y, edgeWeightColorBorder);
+        canvas.drawText((int)weight+"", edgeMidPoint.x, edgeMidPoint.y, edgeWeightColorFill);
     }
 
     // if we ever need to select an edge - may be needed for user interaction
@@ -91,17 +109,20 @@ public class Edge {
 
     // set line color
     // pass the color id returned by act.getResources().getColor(R.color.{the color id})
-    public void setLineColor(int newColor) {
-        lineColor.setColor(newColor);
+    public void setEdgeColor(int newColor, float newLineThickness) {
+        edgeLineColor.setColor(newColor);
+        edgeLineColor.setStrokeWidth(newLineThickness);
     }
 
-    // set edge weight
-    public void setWeight(float newWeight) {
-        weight = newWeight;
-    }
+    // pass the color id returned by act.getResources().getColor(R.color.{the color id})
+    public void setEdgeWeightFont(int colorFill, int colorBorder, int size) {
+        edgeWeightColorFill.setColor(colorFill);
+        edgeWeightColorFill.setTextSize(size);
+        edgeWeightColorFill.setTextAlign(Paint.Align.CENTER);
 
-    // set drawing line thickness
-    public void setLineThickness(float newLineThickness) {
-        lineColor.setStrokeWidth(newLineThickness);
+        edgeWeightColorBorder.setColor(colorBorder);
+        edgeWeightColorBorder.setTextSize((int) (size * 1.2));
+        edgeWeightColorBorder.setTextAlign(Paint.Align.CENTER);
+        edgeWeightColorBorder.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
     }
 }

@@ -3,4 +3,28 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Graph parameters -->
+    <integer name="graphNumRows">3</integer>
+    <integer name="graphNumCols">4</integer>
+    <integer-array name="screenMargins">
+        <item>450</item>,
+        <item>150</item>,
+        <item>150</item>,
+        <item>250</item>
+    </integer-array>
+    <integer name="numNodesToRemove">3</integer>
+    <integer name="numEdgesToRemove">7</integer>
+    <integer name="numEdgesToAdd">3</integer>
+
+    <!-- Node parameters -->
+    <integer name="nodeLabelFontSize">70</integer>
+    <integer name="nodeRankFontSize">40</integer>
+    <integer name="nodeBorderThickness">7</integer>
+    <integer name="nodeRadius">60</integer>
+    <integer name="jitter">80</integer>
+
+    <!-- Edge parameters -->
+    <integer name="edgeLineThickness">5</integer>
+    <integer name="edgeWeightFontSize">40</integer>
 </resources>
