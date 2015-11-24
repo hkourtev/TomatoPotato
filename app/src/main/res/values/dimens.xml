@@ -14,7 +14,7 @@
     <dimen name="activityLearnLinLayWidth">250dp</dimen>
     <dimen name="activityLearnTextViewPad">5dp</dimen>
     <dimen name="activityLearnTextViewMargin">50dp</dimen>
-    <dimen name="activityLearnBtnTxtSize">30sp</dimen>
+    <dimen name="activityLearnBtnTxtSize">20sp</dimen>
     <integer name="activityLearnEdgesListLeftPadding">120</integer>
     <integer name="activityLearnEdgesListBottomPadding">20</integer>
 
@@ -24,7 +24,10 @@
     <dimen name="activityTestPaddingBottom">16dp</dimen>
     <dimen name="activityTestLinLayWidth">250dp</dimen>
     <dimen name="activityTestTextViewPad">5dp</dimen>
-    <dimen name="activityTestBtnTxtSize">30sp</dimen>
+    <dimen name="activityTestTextViewMargin">50dp</dimen>
+    <dimen name="activityTestBtnTxtSize">20sp</dimen>
+    <integer name="activityTestEdgesListLeftPadding">120</integer>
+    <integer name="activityTestEdgesListBottomPadding">20</integer>
 
     <!-- Graph parameters -->
     <integer name="graphNumRows">3</integer>

@@ -57,12 +57,17 @@ public class AlgoKruskal {
 
     public void _SelectEdge(String edgeIndex) {
         currEdgeInd = Integer.parseInt(edgeIndex);
-        Log.d("LearnActivity", "CurrEdgeInd = " + currEdgeInd);
     }
 
     public void _Dummy() {
         // dummy fn that does nothing in order to be able to skip a step but still go through it and
         // display its description
+    }
+
+    public void _Done() {
+        // we pass it a dummy string because otherwise class.getmethod doesn't seem to find this fn
+        // deselect any selected edges and signify the end of the algorithm
+        currEdgeInd++;
     }
 
 
@@ -229,7 +234,7 @@ public class AlgoKruskal {
         for (int j=0; j<MSTEdges.size(); j++)
             MSTweight+=G.edges[MSTEdges.get(j)].weight;
 
-        steps.add(new Step("_Dummy()", new Class[] {}, new String[] {}, "All edges explored.\n\n" +
+        steps.add(new Step("_Done", new Class[] {}, new String[] {}, "All edges explored.\n\n" +
                 "Minimum Weight Spanning Tree complete.\n\nWeight: " + MSTweight + "\n\n" +
                 "Press QUIT to go back", true, false));
     }

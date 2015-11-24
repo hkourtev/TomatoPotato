@@ -8,97 +8,97 @@ android:paddingBottom="@dimen/activityTestPaddingBottom"
 android:id="@id/testActCanvasId"
 tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
 
-<LinearLayout
-    android:layout_width="@dimen/activityTestLinLayWidth"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id = "@+id/linearlayout">
-
-
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnTestStart"
-        android:textSize="@dimen/activityLearnBtnTxtSize"
-        android:id="@id/btnTestStart"
-        android:onClick="startTest" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:gravity="center"
-        android:padding="@dimen/activityTestTextViewPad"
-        android:text="@string/txtViewAvailOpt" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnTestMakeSet"
-        android:textSize="@dimen/activityLearnBtnTxtSize"
-        android:id="@id/btnTestMakeSet"
-        android:onClick="stepMakeSet" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnTestSelectEdge"
-        android:textSize="@dimen/activityLearnBtnTxtSize"
-        android:id="@id/btnTestSelectEdge"
-        android:onClick="stepSelectEdge" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnTestUnion"
-        android:textSize="@dimen/activityLearnBtnTxtSize"
-        android:id="@id/btnTestUnion"
-        android:onClick="stepUnion" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnTestCheck"
-        android:textSize="@dimen/activityLearnBtnTxtSize"
-        android:id="@id/btnTestCheck"
-        android:onClick="stepCheck" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnTestCancel"
-        android:textSize="@dimen/activityLearnBtnTxtSize"
-        android:id="@id/btnTestCancel"
-        android:onClick="stepCancel" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="@dimen/activityTestTextViewPad"
-        android:text="" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnTestQuit"
-        android:textSize="@dimen/activityLearnBtnTxtSize"
-        android:id="@id/btnTestQuit"
-        android:onClick="quitActivity" />
-
-    <TextView
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="@dimen/activityTestLinLayWidth"
         android:layout_height="match_parent"
-        android:background="@color/testActTextViewBack"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:gravity="center"
-        android:padding="@dimen/activityTestTextViewPad"
-        android:text=""
-        android:id="@id/testActTextViewId" />
+        android:orientation="vertical"
+        android:id="@+id/linearLayout">
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnTestStart"
+            android:textSize="@dimen/activityLearnBtnTxtSize"
+            android:id="@id/btnTestStart"
+            android:onClick="startTest"
+            android:layout_marginBottom="@dimen/activityTestPaddingBottom" />
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:gravity="center"
+            android:padding="@dimen/activityTestTextViewPad"
+            android:text="@string/txtViewAvailOpt" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnTestMakeSet"
+            android:textSize="@dimen/activityLearnBtnTxtSize"
+            android:id="@id/btnTestMakeSet"
+            android:onClick="stepMakeSet" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnTestSortEdges"
+            android:textSize="@dimen/activityLearnBtnTxtSize"
+            android:id="@id/btnTestSortEdges"
+            android:onClick="stepSortEdges" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnTestSelectEdge"
+            android:textSize="@dimen/activityLearnBtnTxtSize"
+            android:id="@id/btnTestSelectEdge"
+            android:onClick="stepSelectEdge" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnTestUnion"
+            android:textSize="@dimen/activityLearnBtnTxtSize"
+            android:id="@id/btnTestUnion"
+            android:onClick="stepUnion" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnTestCheck"
+            android:textSize="@dimen/activityLearnBtnTxtSize"
+            android:id="@id/btnTestCheck"
+            android:onClick="stepCheck" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnTestCancel"
+            android:textSize="@dimen/activityLearnBtnTxtSize"
+            android:id="@id/btnTestCancel"
+            android:onClick="stepCancel"
+            android:layout_marginBottom="@dimen/activityTestPaddingBottom"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnTestQuit"
+            android:textSize="@dimen/activityLearnBtnTxtSize"
+            android:id="@id/btnTestQuit"
+            android:onClick="quitActivity" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/testActTextViewBack"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:gravity="center"
+            android:padding="@dimen/activityTestTextViewPad"
+            android:text=""
+            android:id="@id/testActTextViewId"
+            android:layout_marginBottom="@dimen/activityLearnTextViewMargin"/>
+    </LinearLayout>
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -109,7 +109,14 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:id="@+id/button"
         android:layout_gravity="right"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentLeft="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:padding="@dimen/activityTestTextViewPad"
+        android:text="Edges: "
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

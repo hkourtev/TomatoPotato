@@ -14,6 +14,7 @@
     <string name="btnTestUnion">UNION(_,_)</string>
     <string name="btnTestCheck">CHECK STEP</string>
     <string name="btnTestMakeSet">MAKE SET(_)</string>
+    <string name="btnTestSortEdges">SORT EDGES</string>
     <string name="btnTestSelectEdge">SEL. EDGE</string>
     <string name="btnTestStart">START</string>
 

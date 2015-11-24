@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -46,6 +47,9 @@ public class LearnActivity extends AppCompatActivity {
 
         // draw edge list
         kruskal.G.drawEdgeList(kruskal.currEdgeInd);
+
+        // disable previous button
+        setButtonStates(false, true);
     }
 
     public void nextStep(View view) {
@@ -55,6 +59,26 @@ public class LearnActivity extends AppCompatActivity {
 
             currStep++;
         }
+
+        setButtonStates();
+    }
+
+    public void setButtonStates(Boolean prev, Boolean next) {
+        // enable/disable the right buttons
+        Button btnPrev = (Button)findViewById(R.id.btnLearnPrevStep);
+        Button btnNext = (Button)findViewById(R.id.btnLearnNextStep);
+
+        btnPrev.setEnabled(prev);
+        btnNext.setEnabled(next);
+    }
+
+    public void setButtonStates() {
+        if (currStep == 0)
+            setButtonStates(false, true);
+        else if (currStep == kruskal.steps.size())
+            setButtonStates(true, false);
+        else
+            setButtonStates(true, true);
     }
 
     public void quitActivity(View view) {
@@ -70,12 +94,15 @@ public class LearnActivity extends AppCompatActivity {
 
     public void previousStep(View view) {
         if(currStep > 1){
-        graphReset(myGraph);
-        currStep--;
-        for(int i = 0; i < currStep - 1; i++)
-            executeStep(i, true);
+            graphReset(myGraph);
+            currStep--;
+            for(int i = 0; i < currStep - 1; i++)
+                executeStep(i, true);
 
-        executeStep(currStep - 1, false);}
+            executeStep(currStep - 1, false);
+        }
+
+        setButtonStates();
     }
 
     public void executeStep(int p, boolean supressMessage) {

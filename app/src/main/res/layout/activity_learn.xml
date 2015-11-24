@@ -12,8 +12,8 @@
     <LinearLayout
         android:layout_width="@dimen/activityLearnLinLayWidth"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/linearLayout">
+        android:orientation="vertical" >
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,7 +28,8 @@
             android:text="@string/btnLearnPrevStep"
             android:textSize="@dimen/activityLearnBtnTxtSize"
             android:id="@id/btnLearnPrevStep"
-            android:onClick="previousStep" />
+            android:onClick="previousStep"
+            android:layout_marginBottom="@dimen/activityLearnPaddingBottom"/>
 
         <Button
             android:layout_width="match_parent"
@@ -36,7 +37,8 @@
             android:text="@string/btnLearnQuit"
             android:textSize="@dimen/activityLearnBtnTxtSize"
             android:id="@id/btnLearnQuit"
-            android:onClick="quitActivity" />
+            android:onClick="quitActivity"
+            android:layout_marginBottom="@dimen/activityLearnPaddingBottom"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -49,7 +51,6 @@
             android:id="@id/learnActTextViewId"
             android:layout_marginBottom="@dimen/activityLearnTextViewMargin"/>
     </LinearLayout>
-
 
     <TextView
         android:layout_width="match_parent"

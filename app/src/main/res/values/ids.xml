@@ -16,6 +16,7 @@
     <item name="btnTestUnion" type="id" />
     <item name="btnTestCheck" type="id" />
     <item name="btnTestQuit" type="id" />
+    <item name="btnTestSortEdges" type="id" />
     <item name="btnTestMakeSet" type="id" />
     <item name="btnTestSelectEdge" type="id" />
     <item name="btnTestStart" type="id" />
