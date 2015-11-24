@@ -1,14 +1,20 @@
 package com.njinfotech.algorithmvisualizer;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,54 +25,48 @@ public class TestActivity extends AppCompatActivity {
     Graph myGraph;
     AlgoKruskal kruskal;
     int currStep = 0;
-
+    Boolean b = true;
+    LinearLayout ll ;
     public TextView commandWindow;
 
 
     // canvas class needed for touch detection
-    public class ourCanvas extends RelativeLayout
-    {
-        // extra variables go here
 
-
-        // constructor
-        public ourCanvas(Context context)
-        {
-            super(context);
-
-        }
-
-        // not sure what this does
-        protected void onDraw(Canvas canvas)
-        {
-            super.onDraw(canvas);
-
-
-        }
-
-        // touch detection goes here
-        public boolean onTouchEvent(MotionEvent e)
-        {
-            int xpos=(int) e.getX();
-            int ypos=(int) e.getY();
-            switch (e.getAction())
-            {
-                case MotionEvent.ACTION_DOWN:
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_MOVE:
-                    break;
-
-            }
-            return false;
-        }
+    private boolean inRange(int A, int B, int range){
+        return A + range >= B && A - range <= B;
     }
 
+    //This will only be used to select nodes. Nothing else.
+    //Edges lets move those to a separate activity.
+    //There is literally 0 space on the screen currently, there is no way we can cram anything more on the screen.
 
+    // First you select a node it flips a boolean value inside of it.
+    // Also the node gets highlighted. Then you go to the menu select some operation. That operation depending on how many nodes
+    // it needs, will iterate over all the nodes and select the first K(the number of nodes the operation needs) that have
+    // the select boolean value set to true.
+    public boolean onTouchEvent(MotionEvent e)
+    {
+        int xpos=(int) e.getX();
+        int ypos=(int) e.getY();
+        //Log.d("asd", xpos + " " + ypos);
+        if(e.getAction() == MotionEvent.ACTION_UP){
+
+            for(Node n: myGraph.nodes){
+                if(inRange(n.position.x, xpos,60) && inRange(n.position.y, ypos,60)){
+                    Log.d("asd", n.label);
+                    n.select();
+                }
+            }
+        }
+
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+
 
         commandWindow = (TextView)findViewById(R.id.testActTextViewId);
 
@@ -76,6 +76,9 @@ public class TestActivity extends AppCompatActivity {
         // generate graph and draw graph and wait till user proceeds
         myGraph.generate(false);
         myGraph.draw();
+
+        ll = (LinearLayout)this.findViewById(R.id.linearlayout);
+        ll.setVisibility(LinearLayout.GONE);
 
         // display initial instrucitons in box
 
@@ -89,6 +92,24 @@ public class TestActivity extends AppCompatActivity {
         kruskal.MSTEdges.clear();
     }
 
+    private void openMenu(){
+        ll.setVisibility(LinearLayout.GONE);
+        b = false;
+    }
+
+    private void closeMenu(){
+        ll.setVisibility(LinearLayout.VISIBLE);
+        b = true;
+    }
+    public void showMenu(View view){
+
+            if (b) {
+                openMenu();
+            } else {
+                closeMenu();
+            }
+    }
+
     public void quitActivity(View view) {
         this.finish();
     }
@@ -100,6 +121,10 @@ public class TestActivity extends AppCompatActivity {
 
         // reinitialize algorithm with fresh graph and steps & wait for input
         kruskal = new AlgoKruskal(myGraph, kruskal.steps);
+
+        myGraph.emptyGraphDraw();
+        closeMenu();
+
 
         // disable start button and enable action buttons, except for CHECK STEP
         // we enable that only after an action
@@ -171,7 +196,7 @@ public class TestActivity extends AppCompatActivity {
             mstEdges[j] = kruskal.G.edges[kruskal.MSTEdges.get(j)];
         }
 
-        // draw trees
+        // draw tree
         kruskal.G.draw(mstEdges);
     }
 }

@@ -124,10 +124,14 @@ public class Graph {
 
     // simplified generate function which loads values from the resource files rather than pass manually
     public void generate(Boolean isDirected) {
+        int[] screenMargins = act.getResources().getIntArray(R.array.screenMargins);
+        for(int i = 0; i < screenMargins.length; i++){
+            screenMargins[i] += 150;
+        }
         generate(act.getResources().getInteger(R.integer.graphNumRows),
                 act.getResources().getInteger(R.integer.graphNumCols),
                 act.getResources().getInteger(R.integer.nodeRadius),
-                act.getResources().getIntArray(R.array.screenMargins),
+               screenMargins,
                 act.getResources().getInteger(R.integer.jitter),
                 isDirected);
     }
@@ -323,6 +327,16 @@ public class Graph {
         }
 
         nodePostions = nodePos;
+    }
+
+    public void emptyGraphDraw(){
+
+        canvas.drawColor(Color.WHITE);
+
+        // draw all nodes
+        for (int i=0; i<nodes.length; i++) {
+            nodes[i].draw();
+        }
     }
 
     // remove row and column = ind

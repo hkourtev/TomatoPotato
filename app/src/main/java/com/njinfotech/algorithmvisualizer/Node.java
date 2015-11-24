@@ -4,6 +4,7 @@ import android.graphics.Point;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 
 /**
@@ -23,6 +24,7 @@ public class Node {
     public Paint nodeLabel;
     public Paint nodeRank;
     public Point position;
+    private Boolean selected = false;
 
     // blank constructor - not assigning any values
     public Node() {
@@ -51,6 +53,24 @@ public class Node {
         setNodeRankFont(nodeRankFontColor, nodeRankFontSize);
     }
 
+    public Boolean isSelected(){
+        return selected;
+    }
+
+    public void select(){
+        if(!selected) {
+            Log.d("asd"," " + position.x);
+            selected = true;
+            canvas.drawCircle(position.x, position.y, (float) radius + 15, nodeBorder);
+
+        }
+        else{
+            selected = false;
+            Paint select = new Paint();
+            select.setColor(0xFFFFFFFF);
+            canvas.drawCircle(position.x, position.y, (float) radius + 20, select);
+        }
+    }
     // draw node
     public void draw() {
         // draw the node circle
