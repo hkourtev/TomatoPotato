@@ -52,6 +52,10 @@ public class AlgoKruskal {
         AddMSTEdge(Integer.parseInt(edgeIndex));
     }
 
+    public void _SelectEdge(String fromNode, String toNode) {
+
+    }
+
     public void _Dummy() {
         // dummy fn that does nothing in order to be able to skip a step but still go through it and
         // display its description
@@ -180,7 +184,6 @@ public class AlgoKruskal {
     public void MST()
     {
         // make a set for each node
-
         for (int i = 0; i < G.nodes.length; i++)
         {
             MakeSet(G.nodes[i]);
@@ -194,6 +197,12 @@ public class AlgoKruskal {
                 "Sort all graph edges by weight in ascending order", true, false));
 
         for (int i = 0; i < G.edges.length; i++) {
+            // select edge
+            steps.add(new Step("_SelectEdge", new Class[] {String.class, String.class},
+                    new String[] {G.edges[i].startNode.label, G.edges[i].endNode.label}, "Select edge (" +
+                    G.edges[i].startNode.label + "," + G.edges[i].endNode.label +
+                    ")", true, false));
+
             if(FindSet(G.edges[i].startNode) != FindSet(G.edges[i].endNode)) {
                 // add edge to the MST 
                 AddMSTEdge(i);

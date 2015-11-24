@@ -13,6 +13,9 @@
     <string name="txtViewAvailOpt">ACTIONS:</string>
     <string name="btnTestUnion">UNION(_,_)</string>
     <string name="btnTestCheck">CHECK STEP</string>
+    <string name="btnTestMakeSet">MAKE SET(_)</string>
+    <string name="btnTestSelectEdge">SEL. EDGE</string>
+    <string name="btnTestStart">START</string>
 
     <string name="title_activity_learn">Learn Activity</string>
     <string name="title_activity_test">Test Activity</string>

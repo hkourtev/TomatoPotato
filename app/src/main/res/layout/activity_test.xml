@@ -13,6 +13,14 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnTestStart"
+        android:textSize="@dimen/activityTestBtnTxtSize"
+        android:id="@id/btnTestStart"
+        android:onClick="startTest" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,10 +32,26 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/btnTestMakeSet"
+        android:textSize="@dimen/activityTestBtnTxtSize"
+        android:id="@id/btnTestMakeSet"
+        android:onClick="stepMakeSet" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btnTestSelectEdge"
+        android:textSize="@dimen/activityTestBtnTxtSize"
+        android:id="@id/btnTestSelectEdge"
+        android:onClick="stepSelectEdge" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/btnTestUnion"
         android:textSize="@dimen/activityTestBtnTxtSize"
         android:id="@id/btnTestUnion"
-        android:onClick="beginUnionStep" />
+        android:onClick="stepUnion" />
 
     <Button
         android:layout_width="match_parent"
@@ -35,7 +59,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:text="@string/btnTestCheck"
         android:textSize="@dimen/activityTestBtnTxtSize"
         android:id="@id/btnTestCheck"
-        android:onClick="checkStep" />
+        android:onClick="stepCheck" />
 
     <Button
         android:layout_width="match_parent"
@@ -43,7 +67,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:text="@string/btnTestCancel"
         android:textSize="@dimen/activityTestBtnTxtSize"
         android:id="@id/btnTestCancel"
-        android:onClick="cancelStep" />
+        android:onClick="stepCancel" />
 
     <TextView
         android:layout_width="match_parent"

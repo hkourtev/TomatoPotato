@@ -1,11 +1,15 @@
 package com.njinfotech.algorithmvisualizer;
 
+import android.content.Context;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.lang.reflect.Method;
@@ -17,6 +21,47 @@ public class TestActivity extends AppCompatActivity {
     int currStep = 0;
 
     public TextView commandWindow;
+
+
+    // canvas class needed for touch detection
+    public class ourCanvas extends RelativeLayout
+    {
+        // extra variables go here
+
+
+        // constructor
+        public ourCanvas(Context context)
+        {
+            super(context);
+
+        }
+
+        // not sure what this does
+        protected void onDraw(Canvas canvas)
+        {
+            super.onDraw(canvas);
+
+
+        }
+
+        // touch detection goes here
+        public boolean onTouchEvent(MotionEvent e)
+        {
+            int xpos=(int) e.getX();
+            int ypos=(int) e.getY();
+            switch (e.getAction())
+            {
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_MOVE:
+                    break;
+
+            }
+            return false;
+        }
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +77,9 @@ public class TestActivity extends AppCompatActivity {
         myGraph.generate(false);
         myGraph.draw();
 
-        // execute algorithm
-        kruskal = new AlgoKruskal(myGraph);
-        kruskal.MST();
-
-        // reinitialize algorithm with fresh graph and steps & wait for input
-        kruskal = new AlgoKruskal(myGraph, kruskal.steps);
-
         // display initial instrucitons in box
+
+        // disable buttons makeset, seledge, union, check, cancel, until we begin
     }
 
     private void graphReset(Graph g){
@@ -53,11 +93,37 @@ public class TestActivity extends AppCompatActivity {
         this.finish();
     }
 
-    public void checkStep(View view) {
+    public void startTest(View view) {
+        // execute algorithm
+        kruskal = new AlgoKruskal(myGraph);
+        kruskal.MST();
+
+        // reinitialize algorithm with fresh graph and steps & wait for input
+        kruskal = new AlgoKruskal(myGraph, kruskal.steps);
+
+        // disable start button and enable action buttons, except for CHECK STEP
+        // we enable that only after an action
+    }
+
+    public void stepCheck(View view) {
         //
     }
 
-    public void beginUnionStep(View view) {
+    public void stepUnion(View view) {
+        //
+    }
+
+    public void stepMakeSet(View view) {
+        // display instructions in text box - select node to make set
+        // we can say those need to be selected in lexicographic order.
+        // then wait for action
+    }
+
+    public void stepSelectEdge(View view) {
+        //
+    }
+
+    public void stepSelectCancel(View view) {
         //
     }
 
