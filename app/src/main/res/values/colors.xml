@@ -7,10 +7,10 @@
     <color name="nodeFillColor">#9aeff7</color>
     <color name="nodeFillColorSelected1">#ef6f25</color>
     <color name="nodeFillColorSelected2">#fcd164</color>
+    <color name="nodeFillColorExplored">#b4b4b4</color>
     <color name="nodeBorderColor">#ff0008</color>
     <color name="edgeColor">#303F9F</color>
     <color name="edgeColorExplored">#b4b4b4</color>
-    <color name="edgeColorNotExplored">#000000</color>
     <color name="edgeWeightFontColorFill">#ffffff</color>
     <color name="edgeWeightFontColorBorder">#000000</color>
     <color name="nodeLabelFontColor">#000000</color>

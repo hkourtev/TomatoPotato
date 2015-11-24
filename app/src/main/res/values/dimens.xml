@@ -13,7 +13,10 @@
     <dimen name="activityLearnPaddingBottom">16dp</dimen>
     <dimen name="activityLearnLinLayWidth">250dp</dimen>
     <dimen name="activityLearnTextViewPad">5dp</dimen>
+    <dimen name="activityLearnTextViewMargin">50dp</dimen>
     <dimen name="activityLearnBtnTxtSize">30sp</dimen>
+    <integer name="activityLearnEdgesListLeftPadding">120</integer>
+    <integer name="activityLearnEdgesListBottomPadding">20</integer>
 
     <dimen name="activityTestPaddingLeft">16dp</dimen>
     <dimen name="activityTestPaddingTop">16dp</dimen>
@@ -30,7 +33,7 @@
         <item>400</item>,
         <item>100</item>,
         <item>100</item>,
-        <item>100</item>
+        <item>150</item>
     </integer-array>
     <integer name="numNodesToRemove">3</integer>
     <integer name="numEdgesToRemove">7</integer>

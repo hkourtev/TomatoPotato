@@ -15,6 +15,7 @@ public class Edge {
 
     public Boolean directed;        // whether edge is directed
     public float weight;            // weight or capacity
+
     public float lineThickness;     // edge line thicness in pixels
     public Point startLocation;     // line start coordinates
     public Point endLocation;       // line end coordinates

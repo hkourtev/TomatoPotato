@@ -1,5 +1,7 @@
 package com.njinfotech.algorithmvisualizer;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -12,6 +14,7 @@ public class AlgoKruskal {
     public List<Step> steps;
     public List<Integer> MSTEdges;
     public Graph G;
+    public int currEdgeInd=-1;
 
     // -----------------------------------CONSTRUCTORS ---------------------------------------------
     // when first running algorithm pass graph
@@ -52,8 +55,9 @@ public class AlgoKruskal {
         AddMSTEdge(Integer.parseInt(edgeIndex));
     }
 
-    public void _SelectEdge(String fromNode, String toNode) {
-
+    public void _SelectEdge(String edgeIndex) {
+        currEdgeInd = Integer.parseInt(edgeIndex);
+        Log.d("LearnActivity", "CurrEdgeInd = " + currEdgeInd);
     }
 
     public void _Dummy() {
@@ -198,8 +202,8 @@ public class AlgoKruskal {
 
         for (int i = 0; i < G.edges.length; i++) {
             // select edge
-            steps.add(new Step("_SelectEdge", new Class[] {String.class, String.class},
-                    new String[] {G.edges[i].startNode.label, G.edges[i].endNode.label}, "Select edge (" +
+            steps.add(new Step("_SelectEdge", new Class[] {String.class},
+                    new String[] {Integer.toString(i)}, "Select edge (" +
                     G.edges[i].startNode.label + "," + G.edges[i].endNode.label +
                     ")", true, false));
 

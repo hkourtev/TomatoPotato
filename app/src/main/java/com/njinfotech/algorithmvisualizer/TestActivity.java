@@ -91,7 +91,7 @@ public class TestActivity extends AppCompatActivity {
         }
         kruskal.MSTEdges.clear();
     }
-
+/*
     private void openMenu(){
         ll.setVisibility(LinearLayout.GONE);
         b = false;
@@ -109,7 +109,7 @@ public class TestActivity extends AppCompatActivity {
                 closeMenu();
             }
     }
-
+*/
     public void quitActivity(View view) {
         this.finish();
     }
@@ -123,7 +123,7 @@ public class TestActivity extends AppCompatActivity {
         kruskal = new AlgoKruskal(myGraph, kruskal.steps);
 
         myGraph.emptyGraphDraw();
-        closeMenu();
+//        closeMenu();
 
 
         // disable start button and enable action buttons, except for CHECK STEP

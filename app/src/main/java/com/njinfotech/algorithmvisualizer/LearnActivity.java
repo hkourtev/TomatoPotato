@@ -43,6 +43,9 @@ public class LearnActivity extends AppCompatActivity {
 
         // reinitialize algorithm with fresh graph and steps & wait for input
         kruskal = new AlgoKruskal(myGraph, kruskal.steps);
+
+        // draw edge list
+        kruskal.G.drawEdgeList(kruskal.currEdgeInd);
     }
 
     public void nextStep(View view) {
@@ -119,7 +122,8 @@ public class LearnActivity extends AppCompatActivity {
             mstEdges[j] = kruskal.G.edges[kruskal.MSTEdges.get(j)];
         }
 
-        // draw trees
+        // draw graph and edge list
         kruskal.G.draw(mstEdges);
+        kruskal.G.drawEdgeList(kruskal.currEdgeInd);
     }
 }

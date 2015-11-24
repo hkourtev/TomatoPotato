@@ -20,14 +20,14 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/btnTestStart"
-
+        android:textSize="@dimen/activityLearnBtnTxtSize"
         android:id="@id/btnTestStart"
         android:onClick="startTest" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center"
         android:padding="@dimen/activityTestTextViewPad"
         android:text="@string/txtViewAvailOpt" />
@@ -36,7 +36,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/btnTestMakeSet"
-
+        android:textSize="@dimen/activityLearnBtnTxtSize"
         android:id="@id/btnTestMakeSet"
         android:onClick="stepMakeSet" />
 
@@ -44,7 +44,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/btnTestSelectEdge"
-
+        android:textSize="@dimen/activityLearnBtnTxtSize"
         android:id="@id/btnTestSelectEdge"
         android:onClick="stepSelectEdge" />
 
@@ -52,7 +52,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/btnTestUnion"
-
+        android:textSize="@dimen/activityLearnBtnTxtSize"
         android:id="@id/btnTestUnion"
         android:onClick="stepUnion" />
 
@@ -60,7 +60,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/btnTestCheck"
-
+        android:textSize="@dimen/activityLearnBtnTxtSize"
         android:id="@id/btnTestCheck"
         android:onClick="stepCheck" />
 
@@ -68,7 +68,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/btnTestCancel"
-
+        android:textSize="@dimen/activityLearnBtnTxtSize"
         android:id="@id/btnTestCancel"
         android:onClick="stepCancel" />
 
@@ -83,7 +83,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/btnTestQuit"
-
+        android:textSize="@dimen/activityLearnBtnTxtSize"
         android:id="@id/btnTestQuit"
         android:onClick="quitActivity" />
 

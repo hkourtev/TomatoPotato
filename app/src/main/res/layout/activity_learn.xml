@@ -12,7 +12,8 @@
     <LinearLayout
         android:layout_width="@dimen/activityLearnLinLayWidth"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/linearLayout">
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,9 +46,17 @@
             android:gravity="center"
             android:padding="@dimen/activityLearnTextViewPad"
             android:text=""
-            android:id="@id/learnActTextViewId" />
-
-
+            android:id="@id/learnActTextViewId"
+            android:layout_marginBottom="@dimen/activityLearnTextViewMargin"/>
     </LinearLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:padding="@dimen/activityTestTextViewPad"
+        android:text="Edges: "
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

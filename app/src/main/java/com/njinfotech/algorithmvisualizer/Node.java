@@ -72,6 +72,7 @@ public class Node {
         }
     }
     // draw node
+
     public void draw() {
         // draw the node circle
         canvas.drawCircle(position.x, position.y, (float) radius, nodeFill);

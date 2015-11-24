@@ -41,6 +41,8 @@ public class Graph {
     private RelativeLayout drawSpace;
     private Canvas canvas;
 
+    int activeEdgeInd;
+
     private Set<Integer> edgeWeights = new TreeSet<Integer>();
 
     public Graph() {
@@ -68,70 +70,12 @@ public class Graph {
         canvas = new Canvas(canvasBg);
     }
 
-    /*
-    // generate graph from provided adjacency list -- incomplete, node positions not calculated
-    public void generate(int numNodes, int[][]tmpEdgeList, int radius, int[] screenMargins, Boolean isDirected) {
-        directed = isDirected;
-        margins = screenMargins;
-        int numEdges = tmpEdgeList.length;
-
-        // instantiate nodes and edges
-        nodes = new Node[numNodes];
-        edges = new Edge[numEdges];
-
-        // generate starting adjacency matrix - set to all =false
-        adjMatrix = new int[numNodes][numNodes];
-        for (int k=0; k<numNodes; k++) {
-            for (int m=0; m<numNodes; m++) {
-                adjMatrix[k][m] = -1000000;
-            }
-        }
-
-        // set true for edges that exist
-        for (int k=0; k<numEdges; k++) {
-            adjMatrix[tmpEdgeList[k][0]][tmpEdgeList[k][1]] = tmpEdgeList[k][2];
-            adjMatrix[tmpEdgeList[k][1]][tmpEdgeList[k][0]] = tmpEdgeList[k][2];
-        }
-
-        // create nodes
-        Point tmpPnt = new Point(0,0);
-        for (int k=0; k<numNodes; k++) {
-            nodes[k] = new Node(canvas, Integer.toString(k), 0, 0, radius, act.getResources().getColor(R.color.nodeColor), tmpPnt, null);
-        }
-
-        // loop over the adjacency matrix and create edges
-        int edgeCount=0;
-        for (int p=0; p<numNodes; p++) {
-            if (directed) {
-                // create all edges
-                for (int h = 0; h < numNodes; h++) {
-                    if (adjMatrix[p][h] != -1000000) {
-                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, adjMatrix[p][h], 5, act.getResources().getColor(R.color.edgeColor));
-                        edgeCount++;
-                    }
-                }
-            } else {
-                // use only half of adj matrix
-                for (int h=p; h<numNodes; h++) {
-                    if (adjMatrix[p][h] != -1000000) {
-                        edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed, adjMatrix[p][h], 5, act.getResources().getColor(R.color.edgeColor));
-                        edgeCount++;
-                    }
-                }
-            }
-        }
-    }*/
-
     // simplified generate function which loads values from the resource files rather than pass manually
     public void generate(Boolean isDirected) {
-        int[] screenMargins = act.getResources().getIntArray(R.array.screenMargins);
-        for(int i = 0; i < screenMargins.length; i++){
-            screenMargins[i] += 150;
-        }
         generate(act.getResources().getInteger(R.integer.graphNumRows),
                 act.getResources().getInteger(R.integer.graphNumCols),
                 act.getResources().getInteger(R.integer.nodeRadius),
-               screenMargins,
+                act.getResources().getIntArray(R.array.screenMargins),
                 act.getResources().getInteger(R.integer.jitter),
                 isDirected);
     }
@@ -141,6 +85,7 @@ public class Graph {
         // initialize variables
         directed = isDirected;
         margins = screenMargins;
+        activeEdgeInd = -1;
         int numNodesToRemove = act.getResources().getInteger(R.integer.numNodesToRemove);
         int numEdgesToRemove = act.getResources().getInteger(R.integer.numEdgesToRemove);
         int numEdgesToAdd = act.getResources().getInteger(R.integer.numEdgesToAdd);
@@ -336,6 +281,110 @@ public class Graph {
         // draw all nodes
         for (int i=0; i<nodes.length; i++) {
             nodes[i].draw();
+        }
+    }
+
+    // draw list of edges in provided order
+    public void drawEdgeList(int currEdgeInd) {
+        // calculate spacing between edges, node radius, edge length
+        int leftPadding = act.getResources().getInteger(R.integer.activityLearnEdgesListLeftPadding);
+        int bottomPadding = act.getResources().getInteger(R.integer.activityLearnEdgesListBottomPadding);
+        int spaceAvailPerEdge = (screenSize.x-leftPadding)/edges.length;
+        int nodeRadius = spaceAvailPerEdge/8;
+        int edgeLength = nodeRadius*2;
+        int padding = nodeRadius;
+
+        // set colors
+        Paint nodeColorActive1 = new Paint();
+        Paint nodeColorActive2 = new Paint();
+        Paint nodeColorExplored = new Paint();
+        Paint nodeColorRegular = new Paint();
+        Paint nodeLabelColor = new Paint();
+        Paint edgeColorExplored = new Paint();
+        Paint edgeColorRegular = new Paint();
+        Paint edgeWeightColor = new Paint();
+
+        Paint tmpEdgeColor = new Paint();
+        Paint tmpNode1Color = new Paint();
+        Paint tmpNode2Color = new Paint();
+
+        nodeColorActive1.setColor(act.getResources().getColor(R.color.nodeFillColorSelected1));
+        nodeColorActive2.setColor(act.getResources().getColor(R.color.nodeFillColorSelected2));
+        nodeColorExplored.setColor(act.getResources().getColor(R.color.nodeFillColorExplored));
+        nodeColorRegular.setColor(act.getResources().getColor(R.color.nodeFillColor));
+        nodeLabelColor.setColor(act.getResources().getColor(R.color.nodeLabelFontColor));
+        edgeColorExplored.setColor(act.getResources().getColor(R.color.edgeColorExplored));
+        edgeColorRegular.setColor(act.getResources().getColor(R.color.edgeColor));
+        edgeWeightColor.setColor(act.getResources().getColor(R.color.edgeWeightFontColorBorder));
+
+        // calculate edge positions
+        Point[] nodePos = new Point[edges.length*2];
+        Point edgeMidPoint = new Point();
+        for (int y=0; y<edges.length; y++) {
+            nodePos[y*2] = new Point();
+            nodePos[y*2+1] = new Point();
+            if (y == 0) {
+                // add extra padding so we don't overlap with the "Edges:" text
+                nodePos[y*2].x = leftPadding + nodeRadius;
+                nodePos[y*2].y = screenSize.y - bottomPadding - nodeRadius;
+
+                nodePos[y*2+1].x = nodePos[y*2].x + nodeRadius*2 + edgeLength;
+                nodePos[y*2+1].y = screenSize.y - bottomPadding - nodeRadius;
+            } else {
+                nodePos[y*2].x = nodePos[y*2-1].x + padding*2 + nodeRadius*2;
+                nodePos[y*2].y = screenSize.y - bottomPadding - nodeRadius;
+
+                nodePos[y*2+1].x = nodePos[y*2].x + nodeRadius*2 + edgeLength;
+                nodePos[y*2+1].y = screenSize.y - bottomPadding - nodeRadius;
+            }
+
+            // calculate midpoint
+            edgeMidPoint.x = (nodePos[y*2].x+nodePos[y*2+1].x)/2;
+            edgeMidPoint.y = (nodePos[y*2].y+nodePos[y*2+1].y)/2;
+
+            // draw edges with diff colors for explored, current and not yet explored
+            if (y < currEdgeInd) {
+                // edge has been explored
+                tmpEdgeColor = edgeColorExplored;
+                tmpNode1Color = nodeColorExplored;
+                tmpNode2Color = nodeColorExplored;
+            } else if (y == currEdgeInd) {
+                // currently selected edge
+                tmpEdgeColor = edgeColorRegular;
+                tmpNode1Color = nodeColorActive1;
+                tmpNode2Color = nodeColorActive2;
+
+                // draw graph nodes again with right colors
+                // draw real node with right color and set color back to regular
+                edges[y].startNode.nodeFill = tmpNode1Color;
+                edges[y].startNode.draw();
+                edges[y].startNode.nodeFill = nodeColorRegular;
+
+                edges[y].endNode.nodeFill = tmpNode2Color;
+                edges[y].endNode.draw();
+                edges[y].endNode.nodeFill = nodeColorRegular;
+            } else {
+                // not yet explored
+                tmpEdgeColor = edgeColorRegular;
+                tmpNode1Color = nodeColorRegular;
+                tmpNode2Color = nodeColorRegular;
+            }
+
+            // draw edge and weight
+            canvas.drawLine(nodePos[y * 2].x, nodePos[y * 2].y,
+                    nodePos[y * 2 + 1].x, nodePos[y * 2 + 1].y, tmpEdgeColor);
+            canvas.drawText((int) edges[y].weight + "",
+                    edgeMidPoint.x, edgeMidPoint.y, edgeWeightColor);
+
+            // draw the from node and label
+            canvas.drawCircle(nodePos[y*2].x, nodePos[y*2].y, (float) nodeRadius, tmpNode1Color);
+            canvas.drawText(edges[y].startNode.label,
+                    nodePos[y * 2].x, nodePos[y * 2].y, nodeLabelColor);
+
+            // draw the to node and label
+            canvas.drawCircle(nodePos[y*2+1].x, nodePos[y*2+1].y, (float) nodeRadius, tmpNode2Color);
+            canvas.drawText(edges[y].endNode.label,
+                    nodePos[y*2+1].x, nodePos[y*2+1].y, nodeLabelColor);
         }
     }
 
