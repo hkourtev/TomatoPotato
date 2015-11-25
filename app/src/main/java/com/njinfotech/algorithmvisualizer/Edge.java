@@ -10,7 +10,7 @@ import android.graphics.Typeface;
 /**
  * Created by hkourtev on 11/12/15.
  */
-public class Edge {
+public class Edge implements Cloneable {
     private Canvas canvas;          // reference to the layout contrainer (drawing surface) in activity
 
     public Boolean directed;        // whether edge is directed
@@ -48,6 +48,15 @@ public class Edge {
         initEdgeCoord(startNode, endNode);
         setEdgeColor(edgeColor, edgeLineThickness);
         setEdgeWeightFont(weightFontColorFill, weightFontColorBorder, weightFontSize);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        // in order to be able to copy object by value if needed
+        Edge cloned = (Edge)super.clone();
+        cloned.startNode = (Node)cloned.startNode.clone();
+        cloned.endNode = (Node)cloned.endNode.clone();
+        return cloned;
     }
 
     // initializes edge coordinates after node and everything else has been assigned

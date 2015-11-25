@@ -20,6 +20,13 @@ public class Action {
         numRcvdParam = 0;
     }
 
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        // in order to be able to copy object by value if needed
+        Action cloned = (Action)super.clone();
+        return cloned;
+    }
+
     public void addParam(String par) {
         parameters[numRcvdParam] = par;
         numRcvdParam++;

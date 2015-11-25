@@ -26,9 +26,6 @@ public class TestActivity extends AppCompatActivity {
     Graph myGraph;
     AlgoKruskal kruskal;
     int currStep = 0;
-    int activeEdgeInd = -1;
-    Boolean b = true;
-    LinearLayout ll ;
     public TextView commandWindow;
 
     Action currentAction = null;
@@ -70,14 +67,14 @@ public class TestActivity extends AppCompatActivity {
                                         "No more parameters required for this action. \n\n" +
                                         "Press 'Check Step' or 'Cancel'");
 
-                                setButtonStates(false, false, false, false, false, true, true);
+                                setButtonStates(false, false, false, false, false, false, true, true);
                             }
                         } else {
                             // msg that you cannot select any more nodes
                             commandWindow.setText("Warning: You have selected the maximum number of nodes for this action. \n\n" +
                                     "Press 'Check Step' or 'Cancel'");
 
-                            setButtonStates(false, false, false, false, false, true, true);
+                            setButtonStates(false, false, false, false, false, false, true, true);
                         }
                     }
                 }
@@ -101,31 +98,10 @@ public class TestActivity extends AppCompatActivity {
         myGraph.generate(false);
         myGraph.draw();
 
-        ll = (LinearLayout)this.findViewById(R.id.linearLayout);
-        ll.setVisibility(LinearLayout.GONE);
-
         // display initial instrucitons in box
 
         // disable buttons makeset, seledge, union, check, cancel, until we begin
-        setButtonStates(true, false, false, false, false, false, false);
-    }
-
-    private void openMenu(){
-        ll.setVisibility(LinearLayout.GONE);
-        b = false;
-    }
-
-    private void closeMenu(){
-        ll.setVisibility(LinearLayout.VISIBLE);
-        b = true;
-    }
-    public void showMenu(View view){
-
-            if (b) {
-                openMenu();
-            } else {
-                closeMenu();
-            }
+        setButtonStates(true, false, false, false, false, false, false, false);
     }
 
     public void quitActivity(View view) {
@@ -140,15 +116,11 @@ public class TestActivity extends AppCompatActivity {
         // reinitialize algorithm with fresh graph and steps & wait for input
         kruskal = new AlgoKruskal(myGraph, kruskal.steps);
 
-        myGraph.emptyGraphDraw();
-        closeMenu();
-
-        // init active edge index locally because the one stored in the graph get reset
-        activeEdgeInd = kruskal.G.activeEdgeInd;
+        kruskal.G.emptyGraphDraw();
 
         // disable start button and enable action buttons, except for CHECK STEP
         // we enable that only after an action
-        setButtonStates(false, true, true, true, true, false, false);
+        setButtonStates(false, true, true, true, true, true, false, false);
     }
 
     public void stepCheck(View view) {
@@ -158,8 +130,9 @@ public class TestActivity extends AppCompatActivity {
                 // compare action to current step
                 if (currentAction.command.equals("_Union") && kruskal.steps.get(currStep+1).command.equals("_Union")) {
                     // special case for union to avoid having a button for _AddMST command
-                    if (kruskal.steps.get(currStep+1).compare(currentAction.command, currentAction.parameters)) {
-                        // execute add mstedge step
+                    if (kruskal.steps.get(currStep+1).compare(currentAction.command,
+                            currentAction.parameters, kruskal.steps.get(currStep+1).orderMatters)) {
+                        // automatically execute addMSTedge step, so that we do not need a button for it
                         executeStep(currStep, false);
                         currStep++;
 
@@ -177,7 +150,8 @@ public class TestActivity extends AppCompatActivity {
                         commandWindow.setText("Error: Wrong parameters provided. Try again.");
                     }
                 } else {
-                    if (kruskal.steps.get(currStep).compare(currentAction.command, currentAction.parameters)) {
+                    if (kruskal.steps.get(currStep).compare(currentAction.command,
+                            currentAction.parameters, kruskal.steps.get(currStep).orderMatters)) {
                         // execute step
                         executeStep(currStep, false);
                         currStep++;
@@ -196,10 +170,10 @@ public class TestActivity extends AppCompatActivity {
                     currStep++;
 
                     // set up buttons
-                    setButtonStates(false, false, false, false, false, false, false);
+                    setButtonStates(false, false, false, false, false, false, false, false);
                 } else {
                     // set up buttons
-                    setButtonStates(false, true, true, true, true, false, false);
+                    setButtonStates(false, true, true, true, true, true, false, false);
                 }
             }
         }
@@ -210,7 +184,7 @@ public class TestActivity extends AppCompatActivity {
         commandWindow.setText("Action Union(_,_) selected. \n\n" +
                 "Select the roots of the 2 sets that should be united.");
 
-        setButtonStates(false, false, false, false, false, false, true);
+        setButtonStates(false, false, false, false, false, false, false, true);
     }
 
     public void stepMakeSet(View view) {
@@ -221,28 +195,38 @@ public class TestActivity extends AppCompatActivity {
         commandWindow.setText("Action MakeSet(_) selected. \n\nSelect a node to make set with. " +
                 "Please note that nodes should be provided in ascending order.");
 
-        setButtonStates(false, false, false, false, false, false, true);
+        setButtonStates(false, false, false, false, false, false, false, true);
+    }
+
+    public void stepSkipEdge(View view) {
+        // display instructions in text box - select node to make set
+        // we can say those need to be selected in lexicographic order.
+        // then wait for action
+        currentAction = new Action("_SkipEdge", 0);
+        commandWindow.setText("Action SkipEdge selected.\n\nPress 'Check Step' or 'Cancel'");
+
+        setButtonStates(false, false, false, false, false, false, true, true);
     }
 
     public void stepSortEdges(View view) {
         // select next edge, user doesn't need to select anything
         currentAction = new Action("_SortEdges", 0);
 
-        commandWindow.setText("Press 'Check Step' or 'Cancel'");
+        commandWindow.setText("Action SortEdges selected.\n\nPress 'Check Step' or 'Cancel'");
 
-        setButtonStates(false, false, false, false, false, true, true);
+        setButtonStates(false, false, false, false, false, false, true, true);
     }
 
     public void stepSelectEdge(View view) {
         // select next edge, user doesn't need to select anything
         currentAction = new Action("_SelectEdge", 1);
-        currentAction.addParam(Integer.toString(activeEdgeInd+1));
+        currentAction.addParam(Integer.toString(kruskal.currEdgeInd+1));
 
-        commandWindow.setText("Edge (" + kruskal.G.edges[kruskal.G.activeEdgeInd + 1].startNode.label +
-                "," + kruskal.G.edges[kruskal.G.activeEdgeInd + 1].endNode.label +
+        commandWindow.setText("Edge (" + kruskal.G.edges[kruskal.currEdgeInd + 1].startNode.label +
+                "," + kruskal.G.edges[kruskal.currEdgeInd + 1].endNode.label +
                 ") successfully selected. \n\nPress 'Check Step' or 'Cancel'");
 
-        setButtonStates(false, false, false, false, false, true, true);
+        setButtonStates(false, false, false, false, false, false, true, true);
     }
 
     public void stepCancel(View view) {
@@ -250,16 +234,17 @@ public class TestActivity extends AppCompatActivity {
         commandWindow.setText("Action Cancelled. Select new action and try again.");
         currentAction = null;
 
-        setButtonStates(false, true, true, true, true, true, false);
+        setButtonStates(false, true, true, true, true, true, false, false);
     }
 
     public void setButtonStates(Boolean start, Boolean makeSet, Boolean sortEdges, Boolean selEdge,
-                                Boolean union, Boolean checkStep, Boolean cancel) {
+                                Boolean skipEdge, Boolean union, Boolean checkStep, Boolean cancel) {
         // enable/disable the right buttons
         Button btnStart = (Button)findViewById(R.id.btnTestStart);
         Button btnMakeSet = (Button)findViewById(R.id.btnTestMakeSet);
         Button btnSortEdges = (Button)findViewById(R.id.btnTestSortEdges);
         Button btnSelEdge = (Button)findViewById(R.id.btnTestSelectEdge);
+        Button btnSkipEdge = (Button)findViewById(R.id.btnTestSkipEdge);
         Button btnUnion = (Button)findViewById(R.id.btnTestUnion);
         Button btnCheckStep = (Button)findViewById(R.id.btnTestCheck);
         Button btnCancel = (Button)findViewById(R.id.btnTestCancel);
@@ -268,6 +253,7 @@ public class TestActivity extends AppCompatActivity {
         btnMakeSet.setEnabled(makeSet);
         btnSortEdges.setEnabled(sortEdges);
         btnSelEdge.setEnabled(selEdge);
+        btnSkipEdge.setEnabled(skipEdge);
         btnUnion.setEnabled(union);
         btnCheckStep.setEnabled(checkStep);
         btnCancel.setEnabled(cancel);

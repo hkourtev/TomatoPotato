@@ -14,21 +14,32 @@ public class AlgoKruskal {
     public List<Step> steps;
     public List<Integer> MSTEdges;
     public Graph G;
-    public int currEdgeInd=-1;
+    public int currEdgeInd;
 
     // -----------------------------------CONSTRUCTORS ---------------------------------------------
     // when first running algorithm pass graph
     public AlgoKruskal(Graph graph) {
-        G = graph;
+        try {
+            G = (Graph) graph.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         steps = new ArrayList<Step>();
         MSTEdges = new ArrayList<Integer>();
+        currEdgeInd = -1;
     }
 
     // used when replaying algorithm step by step, pass fresh graph and steps list
     public AlgoKruskal(Graph graph, List<Step> algoSteps) {
-        G = graph;
+        try {
+            G = (Graph) graph.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         steps = algoSteps;
         MSTEdges = new ArrayList<Integer>();
+        currEdgeInd = -1;
+
         for(int i = 0; i < G.nodes.length;i++){
             G.nodes[i].parent = null;
         }
@@ -59,14 +70,12 @@ public class AlgoKruskal {
         currEdgeInd = Integer.parseInt(edgeIndex);
     }
 
-    public void _Dummy() {
-        // dummy fn that does nothing in order to be able to skip a step but still go through it and
-        // display its description
+    public void _SkipEdge() {
+        // basically do nothing - skip edge
     }
 
     public void _Done() {
-        // we pass it a dummy string because otherwise class.getmethod doesn't seem to find this fn
-        // deselect any selected edges and signify the end of the algorithm
+        // increase edge index, so that when we are done no edge is selected as being active
         currEdgeInd++;
     }
 
@@ -90,7 +99,7 @@ public class AlgoKruskal {
                     "Unite the sets that node " + x.label + " belongs to (tree with root " +
                             xRoot.label + ") and " + y.label + " belongs to (tree with root " +
                             yRoot.label + ") by making node " + xRoot.label +
-                            " parent of node " + yRoot.label, true, false));
+                            " parent of node " + yRoot.label, true, true));
 
         } else {
             if (xRoot.rank == yRoot.rank) {
@@ -115,7 +124,7 @@ public class AlgoKruskal {
                         "Unite the sets that node " + y.label + " belongs to (tree with root " +
                                 yRoot.label + ") and " + x.label + " belongs to (tree with root " +
                                 xRoot.label + ") by making node " + yRoot.label +
-                                " parent of node " + xRoot.label, true, false));
+                                " parent of node " + xRoot.label, true, true));
 
             }
         }
@@ -222,7 +231,7 @@ public class AlgoKruskal {
                 // unite sets - steps for union added inside function
                 Union(G.edges[i].startNode, G.edges[i].endNode);
             } else {
-                steps.add(new Step("_Dummy", new Class[] {}, new String[] {}, "Nodes " +
+                steps.add(new Step("_SkipEdge", new Class[] {}, new String[] {}, "Nodes " +
                         G.edges[i].startNode.label + " and " + G.edges[i].endNode.label +
                         " belong to the same set.\n\nCannot unite.\n\n" +
                         "Skipping edge.", true, false));

@@ -10,7 +10,7 @@ import android.util.Log;
 /**
  * Created by hkourtev on 11/12/15.
  */
-public class Node {
+public class Node implements Cloneable {
     private Canvas canvas;
 
     public String label;
@@ -51,6 +51,14 @@ public class Node {
         setNodeBorderColor(nodeBorderColor, nodeBorderThickness);
         setNodeLabelFont(nodeLabelFontColor, nodeLabelFontSize);
         setNodeRankFont(nodeRankFontColor, nodeRankFontSize);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        // in order to be able to copy object by value if needed
+        Node cloned = (Node)super.clone();
+        cloned.parent = (Node)cloned.parent.clone();
+        return cloned;
     }
 
     public Boolean isSelected(){

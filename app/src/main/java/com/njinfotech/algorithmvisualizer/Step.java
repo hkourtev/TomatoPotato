@@ -1,16 +1,19 @@
 package com.njinfotech.algorithmvisualizer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by hkourtev on 11/22/15.
  */
-public class Step {
+public class Step implements Cloneable {
 
     public String command;
     public String[] arguments;
     public String description;
     public Class[] parameters;
     public Boolean pause;
-    public Boolean paramOrder;
+    public Boolean orderMatters;
     public Boolean executed;
 
     public Step() {
@@ -23,32 +26,61 @@ public class Step {
         arguments = args;
         description = stepDescription;
         pause = haltAfterStep;
-        paramOrder = paramOrderMatters;
+        orderMatters = paramOrderMatters;
         executed = false;
     }
 
-    public Boolean compare(String cmd, String[] args) {
-        if (generateCommand().equals(generateCommand(cmd, args)))
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        // in order to be able to copy object by value if needed
+        Step cloned = (Step)super.clone();
+        return cloned;
+    }
+
+    public Boolean compare(String cmd, String[] args, Boolean orderMatters) {
+        if (command.equals(cmd) && compareArrays(arguments, args, orderMatters)) {
             return true;
-        else
+        } else
             return false;
     }
 
-    public String generateCommand() {
-        return generateCommand(command, arguments);
-    }
-
-    public String generateCommand(String cmd, String[] args) {
-        cmd = cmd + "(";
-        for (int h=0; h<args.length; h++) {
-            if (h==args.length-1) {
-                cmd = cmd + args[h];
+    Boolean compareArrays(String[] arr1, String[] arr2, Boolean orderMatters) {
+        if (arr1.length == arr2.length) {
+            if (orderMatters) {
+                // order matters - compare each entry 1 by one
+                for (int t=0; t<arr1.length; t++) {
+                    if (!arr1[t].equals(arr2[t])) {
+                        return false;
+                    }
+                }
             } else {
-                cmd = cmd + args[h] + ",";
-            }
-        }
-        cmd = cmd + ")";
+                // order doesn't matter
+                List<String> list1 = new ArrayList<String>();
+                List<String> list2 = new ArrayList<String>();
 
-        return cmd;
+                // store array values in list so we can search easily
+                for (int t=0; t<arr1.length; t++) {
+                    list1.add(arr1[t]);
+                    list2.add(arr2[t]);
+                }
+
+                // loop over all the values and see if there is a value we can't find
+                int valIndex;
+                for (int t=list1.size()-1; t>=0; t--) {
+                    valIndex = list2.indexOf(list1.get(t));
+                    if (valIndex != -1) {
+                        // found -- remove values from lists
+                        list1.remove(t);
+                        list2.remove(valIndex);
+                    } else {
+                        // not found - return false
+                        return false;
+                    }
+                }
+            }
+        } else
+            return false;
+
+        return true;
     }
 }

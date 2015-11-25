@@ -55,6 +55,15 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
             android:id="@id/btnTestSelectEdge"
             android:onClick="stepSelectEdge" />
 
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btnTestSkipEdge"
+            android:textSize="@dimen/activityLearnBtnTxtSize"
+            android:id="@id/btnTestSkipEdge"
+            android:onClick="stepSkipEdge" />
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -99,17 +108,6 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
             android:id="@id/testActTextViewId"
             android:layout_marginBottom="@dimen/activityLearnTextViewMargin"/>
     </LinearLayout>
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Menu"
-        android:onClick="showMenu"
-        android:id="@+id/button"
-        android:layout_gravity="right"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true" />
 
     <TextView
         android:layout_width="match_parent"

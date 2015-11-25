@@ -24,7 +24,7 @@ import java.util.TreeSet;
 /**
  * Created by hkourtev on 11/12/15.
  */
-public class Graph {
+public class Graph implements Cloneable {
     private Activity act;
     private int layoutId;
 
@@ -54,6 +54,15 @@ public class Graph {
         layoutId = curLayoutId;
 
         initDrawSpace();
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        // in order to be able to copy object by value if needed
+        Graph cloned = (Graph)super.clone();
+        cloned.edges = cloned.edges.clone();
+        cloned.nodes = cloned.nodes.clone();
+        return cloned;
     }
 
     // initialize the background and canvas, screen size and so on
@@ -172,7 +181,7 @@ public class Graph {
                 for (int h = 0; h < numNodes; h++) {
                     if (adjMatrix[p][h] != -1000000) {
                         edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed,
-                                genEdgeWeight(),
+                                genEdgeWeight(edges.length),
                                 act.getResources().getInteger(R.integer.edgeLineThickness),
                                 act.getResources().getColor(R.color.edgeColor),
                                 act.getResources().getColor(R.color.edgeWeightFontColorFill),
@@ -186,7 +195,7 @@ public class Graph {
                 for (int h=p; h<numNodes; h++) {
                     if (adjMatrix[p][h] != -1000000) {
                         edges[edgeCount] = new Edge(canvas, nodes[p], nodes[h], directed,
-                                genEdgeWeight(),
+                                genEdgeWeight(edges.length),
                                 act.getResources().getInteger(R.integer.edgeLineThickness),
                                 act.getResources().getColor(R.color.edgeColor),
                                 act.getResources().getColor(R.color.edgeWeightFontColorFill),
@@ -424,13 +433,16 @@ public class Graph {
     }
 
     // generate random edge weights which do not repeat
-    private int genEdgeWeight() {
+    private int genEdgeWeight(int numEdges) {
         Random w = new Random();
-        int newWeight = w.nextInt(30);
+
+        // we are trying to assign unique weight to each edge so we need numEdges values
+        // add 1 to make sure we don't have 0 as value
+        int newWeight = w.nextInt(numEdges)+1;
 
         if (!edgeWeights.isEmpty()) {
             while (edgeWeights.contains(newWeight)) {
-                newWeight = w.nextInt(30);
+                newWeight = w.nextInt(numEdges)+1;
             }
         }
 
