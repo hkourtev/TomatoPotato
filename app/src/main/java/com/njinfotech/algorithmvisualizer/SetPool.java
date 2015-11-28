@@ -18,7 +18,7 @@ public class SetPool implements Iterable{
     }
 
     public void sortPool(){
-        Collections.sort(sets);
+        Collections.sort(sets, Collections.reverseOrder());
     }
 
     public Iterator iterator(){
@@ -39,29 +39,25 @@ public class SetPool implements Iterable{
     }
 
     public void unionSets(String labelLeft, String labelRight){
-        set left = null, right = null;
+        set matches[] = new set[2];
+        int count[] = new int[2];
+        int index = 0;
         Iterator I = sets.iterator();
         while(I.hasNext()){
             set temp = (set)I.next();
-            if(temp.getLabel() == labelLeft || temp.hasChild(labelLeft)){
-                left = temp;
-            }
-            else if(temp.getLabel() == labelRight || temp.getLabel() == labelRight){
-                if(left != null){
-                    right = temp;
-                }
-                else{
-                    left = temp;
-                }
+            if(temp.getLabel() == labelLeft || temp.hasChild(labelLeft) || temp.getLabel() == labelRight || temp.getLabel() == labelRight){
+                matches[index] = temp;
+                count[index] = temp.getWeight();
+                index++;
             }
         }
-        if(left.getWeight() >= right.getWeight()){
-            left.absorbSet(right);
-            sets.remove(right);
+        if(count[0] >= count[1]){
+            matches[0].absorbSet(matches[1]);
+            sets.remove(matches[1]);
         }
         else{
-            right.absorbSet(left);
-            sets.remove(left);
+            matches[1].absorbSet(matches[0]);
+            sets.remove(matches[0]);
         }
     }
 

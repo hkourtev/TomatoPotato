@@ -10,7 +10,7 @@ import android.graphics.Typeface;
 /**
  * Created by hkourtev on 11/12/15.
  */
-public class Edge implements Cloneable {
+public class Edge implements Cloneable, Comparable {
     private Canvas canvas;          // reference to the layout contrainer (drawing surface) in activity
 
     public Boolean directed;        // whether edge is directed
@@ -134,5 +134,12 @@ public class Edge implements Cloneable {
         edgeWeightColorBorder.setTextSize((int) (size * 1.2));
         edgeWeightColorBorder.setTextAlign(Paint.Align.CENTER);
         edgeWeightColorBorder.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+    }
+
+    @Override
+    public int compareTo(Object another) {
+        Edge e = (Edge)another;
+        float anotherWeight = e.weight, thisWeight = weight;
+        return anotherWeight > thisWeight ? 1 : anotherWeight == thisWeight ? 0 : -1;
     }
 }

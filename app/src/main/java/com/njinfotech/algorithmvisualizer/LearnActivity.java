@@ -1,5 +1,10 @@
 package com.njinfotech.algorithmvisualizer;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -20,7 +26,13 @@ public class LearnActivity extends AppCompatActivity {
 
     Graph myGraph;
     AlgoKruskal kruskal;
-    int currStep = 0;
+    treePool tp;
+    SetPool sp;
+    StepRecorder sr;
+    Canvas canvas;
+    DisplayManager dm;
+    Bitmap canvasBg;
+
 
     public TextView commandWindow;
 
@@ -36,32 +48,31 @@ public class LearnActivity extends AppCompatActivity {
 
         // generate graph and draw graph and wait till user proceeds
         myGraph.generate(false);
-        myGraph.draw();
 
+
+
+        Point screenSize = new Point();
+        this.getWindowManager().getDefaultDisplay().getSize(screenSize);
+
+        // create a paintable bitmap
+        canvasBg = Bitmap.createBitmap(screenSize.x, screenSize.y, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(canvasBg);
+        RelativeLayout ll = (RelativeLayout) findViewById(R.id.learnActCanvasId);
+        ll.setBackgroundDrawable(new BitmapDrawable(canvasBg));
+        sp = new SetPool();
+        tp = new treePool();
+
+        sr = new StepRecorder(sp, tp, myGraph);
+        dm = new DisplayManager(screenSize.x, screenSize.y, new int[]{600, 100, 100, 100}, canvas);
         // execute algorithm
-        kruskal = new AlgoKruskal(myGraph);
-        kruskal.MST();
-
-        // reinitialize algorithm with fresh graph and steps & wait for input
-        kruskal = new AlgoKruskal(myGraph, kruskal.steps);
-
-        // draw edge list
-        kruskal.G.drawEdgeList(kruskal.currEdgeInd);
+        kruskal = new AlgoKruskal(myGraph, sr);
+        kruskal.generateSteps();
 
         // disable previous button
         setButtonStates(false, true);
     }
 
-    public void nextStep(View view) {
-        if (currStep < kruskal.steps.size()) {
-            // run currStep
-            executeStep(currStep, false);
 
-            currStep++;
-        }
-
-        setButtonStates();
-    }
 
     public void setButtonStates(Boolean prev, Boolean next) {
         // enable/disable the right buttons
@@ -72,85 +83,23 @@ public class LearnActivity extends AppCompatActivity {
         btnNext.setEnabled(next);
     }
 
-    public void setButtonStates() {
-        if (currStep == 0)
-            setButtonStates(false, true);
-        else if (currStep == kruskal.steps.size())
-            setButtonStates(true, false);
-        else
-            setButtonStates(true, true);
-    }
-
     public void quitActivity(View view) {
         this.finish();
     }
 
-    private void graphReset(Graph g){
-        for(Node n: g.nodes){
-            n.parent = null;
+    public void nextStep(View view){
+        if(sr.hasNext()) {
+            sr.nextStep();
         }
-        kruskal.MSTEdges.clear();
+
+        dm.drawSet(sp);
+        Log.d("asd", " " + sp.getTotalSetCount());
+        conclude();
     }
 
-    public void previousStep(View view) {
-        if(currStep > 1){
-            graphReset(myGraph);
-            currStep--;
-            for(int i = 0; i < currStep - 1; i++)
-                executeStep(i, true);
-
-            executeStep(currStep - 1, false);
-        }
-
-        setButtonStates();
+    private void conclude(){
+        RelativeLayout drawSpace = (RelativeLayout) this.findViewById(R.id.learnActCanvasId);
+        drawSpace.setBackgroundDrawable(new BitmapDrawable(canvasBg));
     }
 
-    public void executeStep(int p, boolean supressMessage) {
-        // execute step using reflection
-        try {
-
-            Method method = kruskal.getClass().getMethod(kruskal.steps.get(p).command, kruskal.steps.get(p).parameters);
-
-            switch (kruskal.steps.get(p).arguments.length) {
-                case 0:
-                    try {
-                        method.invoke(kruskal);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case 1:
-                    try {
-                        method.invoke(kruskal, kruskal.steps.get(p).arguments[0]);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case 2:
-                    try {
-                        method.invoke(kruskal, kruskal.steps.get(p).arguments[0], kruskal.steps.get(p).arguments[1]);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // display message
-        if(!supressMessage) {
-            commandWindow.setText(kruskal.steps.get(p).description);
-        }
-
-        Edge[] mstEdges = new Edge[kruskal.MSTEdges.size()];
-        for (int j=0; j<kruskal.MSTEdges.size(); j++) {
-            mstEdges[j] = kruskal.G.edges[kruskal.MSTEdges.get(j)];
-        }
-
-        // draw graph and edge list
-        kruskal.G.draw(mstEdges);
-        kruskal.G.drawEdgeList(kruskal.currEdgeInd);
-    }
 }

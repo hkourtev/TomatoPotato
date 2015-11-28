@@ -12,7 +12,8 @@
     <LinearLayout
         android:layout_width="@dimen/activityLearnLinLayWidth"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:id="@+id/linearLayout2">
 
         <Button
             android:layout_width="match_parent"
@@ -59,5 +60,17 @@
         android:padding="@dimen/activityTestTextViewPad"
         android:text="Edges: "
         android:layout_alignParentBottom="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tree View"
+        android:id="@+id/button"
+        android:onClick="drawTree"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/linearLayout2"
+        android:layout_toEndOf="@+id/linearLayout2"
+        android:layout_marginLeft="174dp"
+        android:layout_marginStart="174dp" />
 
 </RelativeLayout>

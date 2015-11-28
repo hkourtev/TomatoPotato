@@ -5,7 +5,7 @@
     <dimen name="activityMainHorizontalMargin">16dp</dimen>
     <dimen name="activityMainVerticalMargin">16dp</dimen>
     <dimen name="activityMainLinLayWidth">250dp</dimen>
-    <dimen name="activityMainBtnTxtSize">30sp</dimen>
+    <dimen name="activityMainBtnTxtSize">15sp</dimen>
 
     <dimen name="activityLearnPaddingLeft">16dp</dimen>
     <dimen name="activityLearnPaddingTop">16dp</dimen>
@@ -14,14 +14,14 @@
     <dimen name="activityLearnLinLayWidth">250dp</dimen>
     <dimen name="activityLearnTextViewPad">5dp</dimen>
     <dimen name="activityLearnTextViewMargin">50dp</dimen>
-    <dimen name="activityLearnBtnTxtSize">20sp</dimen>
+    <dimen name="activityLearnBtnTxtSize">5sp</dimen>
     <integer name="activityLearnEdgesListLeftPadding">120</integer>
     <integer name="activityLearnEdgesListBottomPadding">20</integer>
 
-    <dimen name="activityTestPaddingLeft">16dp</dimen>
+    <dimen name="activityTestPaddingLeft">8dp</dimen>
     <dimen name="activityTestPaddingTop">16dp</dimen>
     <dimen name="activityTestPaddingRight">16dp</dimen>
-    <dimen name="activityTestPaddingBottom">16dp</dimen>
+    <dimen name="activityTestPaddingBottom">8dp</dimen>
     <dimen name="activityTestLinLayWidth">250dp</dimen>
     <dimen name="activityTestTextViewPad">5dp</dimen>
     <dimen name="activityTestTextViewMargin">50dp</dimen>
@@ -35,7 +35,7 @@
     <integer-array name="screenMargins">
         <item>400</item>,
         <item>100</item>,
-        <item>100</item>,
+        <item>150</item>,
         <item>150</item>
     </integer-array>
     <integer name="numNodesToRemove">3</integer>

@@ -22,7 +22,7 @@ import android.widget.TextView;
 import java.lang.reflect.Method;
 
 public class TestActivity extends AppCompatActivity {
-
+/*
     Graph myGraph;
     AlgoKruskal kruskal;
     int currStep = 0;
@@ -307,4 +307,5 @@ public class TestActivity extends AppCompatActivity {
         kruskal.G.draw(mstEdges);
         kruskal.G.drawEdgeList(kruskal.currEdgeInd);
     }
+    */
 }
