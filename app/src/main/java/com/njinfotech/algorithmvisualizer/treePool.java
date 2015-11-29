@@ -71,8 +71,16 @@ public class treePool implements Iterable{
 
             public void connect(Node child, int edgeWeight){
                 this.children.add(child);
-                child.parent = this;
-                child.edgeWeight = edgeWeight;
+                reAssignParents(child, this);
+            }
+
+            public void reAssignParents(Node current, Node newParent){
+                Node parent = current.parent;
+                current.parent = newParent;
+                if(parent != null) {
+                    current.addChild(parent);
+                    reAssignParents(parent, current);
+                }
             }
 
             public String getLabel(){
