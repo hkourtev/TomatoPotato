@@ -41,15 +41,9 @@ public class TestActivity extends AppCompatActivity {
     MediaPlayer goodSound = null, badSound = null;
     Action currentAction = null;
 
-    // canvas class needed for touch detection
-
     private boolean inRange(int A, int B, int range){
         return A + range >= B && A - range <= B;
     }
-
-    //This will only be used to select nodes. Nothing else.
-    //Edges lets move those to a separate activity.
-    //There is literally 0 space on the screen currently, there is no way we can cram anything more on the screen.
 
     // First you select a node it flips a boolean value inside of it.
     // Also the node gets highlighted. Then you go to the menu select some operation. That operation depending on how many nodes
@@ -84,15 +78,9 @@ public class TestActivity extends AppCompatActivity {
                                         "Please select " + (currentAction.numExpectParam - currentAction.numRcvdParam) +
                                         " more node(s) or press 'Cancel'");
                             } else {
-                                // if we now have all paramters - enable check step button
-                                //commandWindow.setText("You have successfully selected node (" + n.label + "). \n\n" +
-                                //        "No more parameters required for this action. \n\n" +
-                                //        "Press 'Check Step' or 'Cancel'");
-
-                                //setButtonStates(false, false, false, false, false, false, true, true, false);
-
+                                // if we now have all paramters - verify the step
                                 if (currentAction.command.equals("_Union")) {
-                                    // reset button text
+                                    // reset button text - since now it says Cancel Union
                                     Button thisBtn = (Button)findViewById(R.id.btnTestUnion);
                                     thisBtn.setText(getResources().getString(R.string.btnTestUnion));
                                 }
@@ -129,8 +117,8 @@ public class TestActivity extends AppCompatActivity {
         myGraph.generate(false);
         myGraph.draw();
 
-        // disable buttons makeset, seledge, union, check, cancel, until we begin
-        setButtonStates(true, false, false, false, false, false, false, false, false);
+        // disable all buttons except start until we begin
+        setButtonStates(true, false, false, false);
 
         // init db
         sessionID = 1;
@@ -163,14 +151,10 @@ public class TestActivity extends AppCompatActivity {
 
         // disable start button and enable action buttons, except for CHECK STEP
         // we enable that only after an action
-        setButtonStates(false, true, true, true, true, true, false, false, true);
+        setButtonStates(false, true, true, true);
 
         // initialize session id
         sessionID = db.getSessionID();
-    }
-
-    public void stepCheck(View view) {
-        checkStep(false);
     }
 
     public void stepUnion(View view) {
@@ -182,7 +166,7 @@ public class TestActivity extends AppCompatActivity {
 
             Button thisBtn = (Button)view;
             thisBtn.setText(getResources().getString(R.string.btnTestCancel));
-            setButtonStates(false, false, false, false, false, true, false, true, false);
+            setButtonStates(false, false, true, false);
         } else {
             // cancel action
             commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
@@ -191,41 +175,8 @@ public class TestActivity extends AppCompatActivity {
 
             Button thisBtn = (Button)view;
             thisBtn.setText(getResources().getString(R.string.btnTestUnion));
-            setButtonStates(false, true, true, true, true, true, false, false, true);
+            setButtonStates(false, true, true, true);
         }
-    }
-
-    public void stepMakeSet(View view) {
-        // display instructions in text box - select node to make set
-        // we can say those need to be selected in lexicographic order.
-        // then wait for action
-        currentAction = new Action("_MakeSet", 1);
-        commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
-        commandWindow.setText("Action MakeSet(_) selected. \n\nSelect a node to make set with. " +
-                "Please note that nodes should be provided in ascending order.");
-
-        setButtonStates(false, false, false, false, false, false, false, true, false);
-    }
-
-    public void stepSkipEdge(View view) {
-        // display instructions in text box - select node to make set
-        // we can say those need to be selected in lexicographic order.
-        // then wait for action
-        currentAction = new Action("_SkipEdge", 0);
-        commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
-        commandWindow.setText("Action SkipEdge selected.\n\nPress 'Check Step' or 'Cancel'");
-
-        //setButtonStates(false, false, false, false, false, false, true, true, false);
-        checkStep(false);
-    }
-
-    public void stepSortEdges(View view) {
-        // select next edge, user doesn't need to select anything
-        currentAction = new Action("_SortEdges", 0);
-        commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
-        commandWindow.setText("Action SortEdges selected.\n\nPress 'Check Step' or 'Cancel'");
-
-        setButtonStates(false, false, false, false, false, false, true, true, false);
     }
 
     public void stepSelectEdge(View view) {
@@ -245,7 +196,6 @@ public class TestActivity extends AppCompatActivity {
                 commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
                 commandWindow.setText("Action SkipEdge selected.\n\nPress 'Check Step' or 'Cancel'");
 
-                //setButtonStates(false, false, false, false, false, false, true, true, false);
                 executeCurrentStep(false);
             }
 
@@ -257,18 +207,8 @@ public class TestActivity extends AppCompatActivity {
                     "," + kruskal.G.edges[kruskal.currEdgeInd + 1].endNode.label +
                     ") successfully selected. \n\nPress 'Check Step' or 'Cancel'");
 
-            //setButtonStates(false, false, false, false, false, false, true, true, false);
             checkStep(false);
         }
-    }
-
-    public void stepCancel(View view) {
-        // cancel action
-        commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
-        commandWindow.setText("Action Cancelled. Select new action and try again.");
-        currentAction = null;
-
-        setButtonStates(false, true, true, true, true, true, false, false, true);
     }
 
     public void switchView(View view) {
@@ -291,28 +231,16 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
-    public void setButtonStates(Boolean start, Boolean makeSet, Boolean sortEdges, Boolean selEdge,
-                                Boolean skipEdge, Boolean union, Boolean checkStep, Boolean cancel,
-                                Boolean switchView) {
+    public void setButtonStates(Boolean start, Boolean selEdge, Boolean union, Boolean switchView) {
         // enable/disable the right buttons
         Button btnStart = (Button)findViewById(R.id.btnTestStart);
-        //Button btnMakeSet = (Button)findViewById(R.id.btnTestMakeSet);
-        //Button btnSortEdges = (Button)findViewById(R.id.btnTestSortEdges);
         Button btnSelEdge = (Button)findViewById(R.id.btnTestSelectEdge);
-        //Button btnSkipEdge = (Button)findViewById(R.id.btnTestSkipEdge);
         Button btnUnion = (Button)findViewById(R.id.btnTestUnion);
-        //Button btnCheckStep = (Button)findViewById(R.id.btnTestCheck);
-        //Button btnCancel = (Button)findViewById(R.id.btnTestCancel);
         Button btnSwitchView = (Button)findViewById(R.id.btnTestSwitchView);
 
         btnStart.setEnabled(start);
-        //btnMakeSet.setEnabled(makeSet);
-        //btnSortEdges.setEnabled(sortEdges);
         btnSelEdge.setEnabled(selEdge);
-        //btnSkipEdge.setEnabled(skipEdge);
         btnUnion.setEnabled(union);
-        //btnCheckStep.setEnabled(checkStep);
-        //btnCancel.setEnabled(cancel);
         btnSwitchView.setEnabled(switchView);
     }
 
@@ -413,10 +341,10 @@ public class TestActivity extends AppCompatActivity {
                 executeCurrentStep(false);
 
                 // set up buttons
-                setButtonStates(false, false, false, false, false, false, false, false, true);
+                setButtonStates(false, false, false, true);
             } else {
                 // set up buttons
-                setButtonStates(false, true, true, true, true, true, false, false, true);
+                setButtonStates(false, true, true, true);
             }
         } else if (currentAction != null) {
             if (kruskal.steps.get(currStep).compare(currentAction.command,
@@ -439,10 +367,10 @@ public class TestActivity extends AppCompatActivity {
                 executeCurrentStep(false);
 
                 // set up buttons
-                setButtonStates(false, false, false, false, false, false, false, false, true);
+                setButtonStates(false, false, false, true);
             } else {
                 // set up buttons
-                setButtonStates(false, true, true, true, true, true, false, false, true);
+                setButtonStates(false, true, true, true);
             }
         }
     }
