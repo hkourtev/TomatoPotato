@@ -294,7 +294,7 @@ public class Graph implements Cloneable {
     }
 
     // draw list of edges in provided order
-    public void drawEdgeList(int currEdgeInd) {
+    public void drawEdgeList(int currEdgeInd, Boolean treeView) {
         // calculate spacing between edges, node radius, edge length
         int leftPadding = act.getResources().getInteger(R.integer.activityLearnEdgesListLeftPadding);
         int bottomPadding = act.getResources().getInteger(R.integer.activityLearnEdgesListBottomPadding);
@@ -366,12 +366,17 @@ public class Graph implements Cloneable {
                 // draw graph nodes again with right colors
                 // draw real node with right color and set color back to regular
                 edges[y].startNode.nodeFill = tmpNode1Color;
-                edges[y].startNode.draw();
-                edges[y].startNode.nodeFill = nodeColorRegular;
-
                 edges[y].endNode.nodeFill = tmpNode2Color;
-                edges[y].endNode.draw();
+
+                if (treeView) {
+                    edges[y].startNode.drawTreeNode();
+                    edges[y].endNode.drawTreeNode();
+                } else {
+                    edges[y].startNode.draw();
+                    edges[y].endNode.draw();
+                }
                 edges[y].endNode.nodeFill = nodeColorRegular;
+                edges[y].startNode.nodeFill = nodeColorRegular;
             } else {
                 // not yet explored
                 tmpEdgeColor = edgeColorRegular;
@@ -506,5 +511,195 @@ public class Graph implements Cloneable {
         // set the layout background to the bitmap we have been drawing on
         drawSpace = (RelativeLayout) act.findViewById(layoutId);
         drawSpace.setBackgroundDrawable(new BitmapDrawable(canvasBg));
+    }
+
+    //-------------------------------------FOREST/TREE RELATED FUNCTIONS --------------------------
+    // draws the forest
+    public void drawForest() {
+        // draw nodes that are not in a set in the right corner
+        // figure out vertical space available
+        int verticalSpace = screenSize.y - margins[1] - margins[3];
+        int defaultRadius = act.getResources().getInteger(R.integer.nodeRadius);
+        int horizontalSpace;
+        int maxHeight=0, tmpHeight=0;
+        int totalWidth=0, tmpWidth=0;
+        Point rootNodeRadius = new Point();
+        Point tmpPoint = new Point(); tmpPoint.x = 0; tmpPoint.y = 0;
+        Point topLeft = new Point();
+        int availSpace;
+
+        // blank the canvas
+        canvas.drawColor(Color.WHITE);
+
+        // vertical space = totalNumNodes*2*radius + totalNumNodes-1*radius
+        // r = verticalspace/(2*totalNumNodes + totalNumNodes - 1);
+        int nodeRadius = verticalSpace/(2*nodes.length + nodes.length -1);
+
+        // figure out number of sets -- loop over nodes get the ones who are their own roots
+        // store roots in array
+        List<Node> roots = new ArrayList<>();
+        List<Node> notInASet = new ArrayList<>();
+        for (int p=0; p<nodes.length; p++) {
+            if (nodes[p].parent == null) {
+                if (tmpPoint.x == 0 && tmpPoint.y == 0) {
+                    // init tmpPoint to first possible drawing position
+                    tmpPoint.x = screenSize.x - margins[2] - nodeRadius;
+                    tmpPoint.y = margins[1] + nodeRadius;
+                } else {
+                    // just increment from previous postion
+                    tmpPoint.y = tmpPoint.y + nodeRadius*3;
+                }
+                nodes[p].positionInTree = new Point(tmpPoint);
+                nodes[p].radiusInTree = nodeRadius;
+                notInASet.add(nodes[p]);
+            } else if (nodes[p].parent == nodes[p]) {
+                // get height of each rooted tree and
+                tmpHeight = getNodeHeight(nodes[p]);
+                if (tmpHeight > maxHeight) maxHeight = tmpHeight;
+
+                // get width of each rooted tree and add up for max width
+                tmpWidth = getSubTreeWidth(nodes[p]);
+                totalWidth = totalWidth + tmpWidth;
+                roots.add(nodes[p]);
+            }
+        }
+
+        // at this point the nodes not in a set are ready to be drawn
+        // we need to figure out the positions of the trees
+        if (notInASet.size() == 0) {
+            // no need to draw nodes on the right, we can use all the space
+            horizontalSpace = screenSize.x - margins[0] - margins[2];
+        } else {
+            // need to leave space for the nodes on the right
+            horizontalSpace = screenSize.x - margins[0] - margins[2]*2 - nodeRadius*2;
+        }
+
+        // calculate max possible root node radius based on available space.
+        // we have both horizontal and vertical restricitons so we calculate 2 radii and pick
+        // the smaller one so that everythign fits
+
+        // horizontal diameter = available space / (totalWidth + numTrees -1)
+        //      we add numTrees-1, so there is a node diameter of spacing between trees
+        // horizontal radius = diameter/2
+        rootNodeRadius.x = horizontalSpace/(2*(totalWidth + roots.size() - 1));
+        rootNodeRadius.y = verticalSpace/(2*(maxHeight + maxHeight-1));
+        if (rootNodeRadius.x > rootNodeRadius.y) rootNodeRadius.y = rootNodeRadius.x;
+        else if (rootNodeRadius.x < rootNodeRadius.y) rootNodeRadius.x = rootNodeRadius.y;
+
+        // still radius shouldn't be larger than the default radius
+        if (defaultRadius < rootNodeRadius.x) {
+            rootNodeRadius.x = defaultRadius;
+            rootNodeRadius.y = defaultRadius;
+        }
+
+        // calculate node positions and store their new radiusInTree
+        // AND draw nodes and edges
+        topLeft.x = margins[0];
+        topLeft.y = margins[1];
+
+        for (int k=0; k<roots.size(); k++) {
+            availSpace = (int)((double)horizontalSpace*(double)roots.get(k).subTreeWidth/(double)totalWidth);
+            calcSubTreeNodePositions(roots.get(k), rootNodeRadius.x, availSpace, totalWidth, topLeft);
+            topLeft.x = topLeft.x + availSpace;
+        }
+
+        // draw nodes that are not in a set
+        for (int k=0; k<notInASet.size(); k++)
+            notInASet.get(k).drawTreeNode();
+    }
+
+    public void calcSubTreeNodePositions(Node currNode, int currNodeRadius, int availSpace,
+                                         int wholeTreeWidth, Point topLeft) {
+        Point tmpTopLeft = new Point(topLeft);
+        Edge tmpEdge = new Edge();
+        int leftOffset, newAvailSpace;
+
+        // calculate position of current node in the middle of available space
+        currNode.positionInTree = new Point();
+        currNode.radiusInTree = currNodeRadius;
+
+        currNode.positionInTree.x = tmpTopLeft.x + availSpace/2;
+        currNode.positionInTree.y = tmpTopLeft.y;
+
+        // draw parent node
+        currNode.drawTreeNode();
+
+        // recurse into each child and repeat
+        List<Node> children = getNodeChildren(currNode);
+        tmpTopLeft.y = tmpTopLeft.y + currNodeRadius*4;
+
+        for (int j=0; j<children.size(); j++) {
+            // figure out space needed depending on subtree total width
+            newAvailSpace = (int)((double)availSpace * (double)children.get(j).subTreeWidth/(double)currNode.subTreeWidth);
+
+            // calculate subtree node positions
+            calcSubTreeNodePositions(children.get(j), currNodeRadius, newAvailSpace, wholeTreeWidth, tmpTopLeft);
+
+            // draw edge to child - child node itself has been drawn during the recursion
+            tmpEdge.drawTreeEdge(canvas, currNode.positionInTree, children.get(j).positionInTree,
+                    act.getResources().getInteger(R.integer.edgeLineThickness),
+                    act.getResources().getColor(R.color.edgeColor), currNodeRadius);
+
+            // advance top left coordinate for next node
+            tmpTopLeft.x = tmpTopLeft.x + newAvailSpace;
+        }
+    }
+
+    public int getSubTreeWidth(Node currNode) {
+        List<Node> children = getNodeChildren(currNode);
+        int width = 0;
+
+        if (children.size() > 0) {
+            // recurse down getting each child's subtree width
+            for (int u = 0; u < children.size(); u++) {
+                width = width + getSubTreeWidth(children.get(u));
+                //if (tmp > max) max = tmp;
+            }
+            //if (children.size() > max) max = children.size();
+
+            // update current node subtree width with the max and return it
+            currNode.subTreeWidth = width;
+            return width;
+        } else {
+            // update subtree width in node, so that we can use it during drawing
+            currNode.subTreeWidth = 1;
+            return 1;
+        }
+    }
+
+    public int getNodeHeight(Node currNode) {
+        List<Node> children = getNodeChildren(currNode);
+        int max = 0, tmp = 0;
+
+        if (children.size() > 0) {
+            // recurse down getting each child's height
+            for (int u = 0; u < children.size(); u++) {
+                tmp = getNodeHeight(children.get(u)) + 1;
+                if (tmp > max) max = tmp;
+            }
+
+            // update current node with max height and return it
+            currNode.heightInTree = max;
+            return max;
+        } else {
+            // update node height, so that we can use it during drawing
+            currNode.heightInTree = 1;
+            return 1;
+        }
+    }
+
+    public List<Node> getNodeChildren(Node currNode) {
+        List<Node> children = new ArrayList<>();
+
+        for (int h=0; h<nodes.length; h++) {
+            if (nodes[h].parent == currNode && nodes[h] != currNode) {
+                children.add(nodes[h]);
+            }
+        }
+
+        // store # of children for later use
+        currNode.numChildren = children.size();
+
+        return children;
     }
 }

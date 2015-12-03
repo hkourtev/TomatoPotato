@@ -10,7 +10,7 @@ import android.graphics.Typeface;
 /**
  * Created by hkourtev on 11/12/15.
  */
-public class Edge implements Cloneable, Comparable {
+public class Edge implements Cloneable {
     private Canvas canvas;          // reference to the layout contrainer (drawing surface) in activity
 
     public Boolean directed;        // whether edge is directed
@@ -112,6 +112,35 @@ public class Edge implements Cloneable, Comparable {
         canvas.drawText((int)weight+"", edgeMidPoint.x, edgeMidPoint.y, edgeWeightColorFill);
     }
 
+    // draw the line to the screen
+    public void drawTreeEdge(Canvas c, Point s, Point e, float thickness, int color, int radius) {
+        Paint lineColor = new Paint();
+        Point start = new Point(s);
+        Point end = new Point(e);
+        lineColor.setColor(color);
+        lineColor.setStrokeWidth(thickness);
+        double vectorX, vectorY;
+        double lineLength;
+
+        // calculate start and end position so they don't overlap with the circle
+
+        // calculate unit vector
+        vectorX = end.x - start.x;
+        vectorY = end.y - start.y;
+        lineLength = Math.sqrt(Math.pow(vectorX,2) + Math.pow(vectorY, 2));
+        vectorX = vectorX/lineLength;
+        vectorY = vectorY/lineLength;
+
+        // update start and end positions
+        start.x = start.x + (int)(vectorX*radius);
+        start.y = start.y + (int)(vectorY*radius);
+        end.x = end.x - (int)(vectorX*radius);
+        end.y = end.y - (int)(vectorY*radius);
+
+        // draw the line
+        c.drawLine(start.x, start.y, end.x, end.y, lineColor);
+    }
+
     // if we ever need to select an edge - may be needed for user interaction
     public void select() {
 
@@ -134,12 +163,5 @@ public class Edge implements Cloneable, Comparable {
         edgeWeightColorBorder.setTextSize((int) (size * 1.2));
         edgeWeightColorBorder.setTextAlign(Paint.Align.CENTER);
         edgeWeightColorBorder.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-    }
-
-    @Override
-    public int compareTo(Object another) {
-        Edge e = (Edge)another;
-        float anotherWeight = e.weight, thisWeight = weight;
-        return anotherWeight > thisWeight ? 1 : anotherWeight == thisWeight ? 0 : -1;
     }
 }

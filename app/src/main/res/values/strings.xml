@@ -7,6 +7,8 @@
     <string name="btnLearnNextStep">NEXT</string>
     <string name="btnLearnPrevStep">PREVIOUS</string>
     <string name="btnLearnQuit">QUIT</string>
+    <string name="btnLearnSwitchViewTree">SWITCH TO GRAPH VIEW</string>
+    <string name="btnLearnSwitchViewGraph">SWITCH TO TREE VIEW</string>
 
     <string name="btnTestCancel">CANCEL</string>
     <string name="btnTestQuit">QUIT</string>
@@ -18,6 +20,8 @@
     <string name="btnTestSelectEdge">GET NEXT EDGE</string>
     <string name="btnTestSkipEdge">SKIP EDGE</string>
     <string name="btnTestStart">START</string>
+    <string name="btnTestSwitchViewTree">SWITCH TO GRAPH VIEW</string>
+    <string name="btnTestSwitchViewGraph">SWITCH TO TREE VIEW</string>
 
     <string name="title_activity_learn">Learn Activity</string>
     <string name="title_activity_test">Test Activity</string>

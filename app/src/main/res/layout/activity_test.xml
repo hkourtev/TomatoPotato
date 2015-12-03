@@ -92,6 +92,15 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="@dimen/activityTestBtnTxtSize"
+            android:id="@id/btnTestSwitchView"
+            android:onClick="switchView"
+            android:layout_marginBottom="@dimen/activityTestPaddingBottom"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/btnTestQuit"
             android:textSize="@dimen/activityLearnBtnTxtSize"
             android:id="@id/btnTestQuit"

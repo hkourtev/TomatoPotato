@@ -24,7 +24,16 @@ public class Node implements Cloneable {
     public Paint nodeLabel;
     public Paint nodeRank;
     public Point position;
+
     private Boolean selected = false;
+
+    // for tree
+    public double radiusInTree;
+    public int heightInTree;
+    public int subTreeWidth;
+    public int numChildren;
+    public Point positionInTree;
+
 
     // blank constructor - not assigning any values
     public Node() {
@@ -79,8 +88,8 @@ public class Node implements Cloneable {
             canvas.drawCircle(position.x, position.y, (float) radius + 20, select);
         }
     }
-    // draw node
 
+    // draw node
     public void draw() {
         // draw the node circle
         canvas.drawCircle(position.x, position.y, (float) radius, nodeFill);
@@ -90,11 +99,33 @@ public class Node implements Cloneable {
             canvas.drawCircle(position.x, position.y, (float)radius + 2, nodeBorder);
         }
 
+        if(this.parent != null) {
+            // draw rank
+            canvas.drawText("r=" + rank, position.x, (float) (position.y - radius + radius * 0.7), nodeRank);
+        }
+
         // draw label
         canvas.drawText(label, position.x, position.y + (float) (radius*0.7), nodeLabel);
+    }
 
-        // draw rank
-        canvas.drawText("r=" + rank, position.x, (float) (position.y - radius + radius*0.7), nodeRank);
+    // draw tree node
+    public void drawTreeNode() {
+        // draw the node circle
+        canvas.drawCircle(positionInTree.x, positionInTree.y, (float) radiusInTree, nodeFill);
+
+        // draw circle around node to signify it is a tree root
+        if(this.parent == this) {
+            canvas.drawCircle(positionInTree.x, positionInTree.y, (float) radiusInTree + 2, nodeBorder);
+        }
+
+        // draw rank whenever node is in a set
+        if (this.parent != null) {
+            // draw rank
+            canvas.drawText("r=" + rank, positionInTree.x, (float) (positionInTree.y - radiusInTree + radiusInTree * 0.7), nodeRank);
+        }
+
+        // draw label
+        canvas.drawText(label, positionInTree.x, positionInTree.y + (float) (radiusInTree*0.7), nodeLabel);
     }
 
     // pass the color id returned by act.getResources().getColor(R.color.{the color id})

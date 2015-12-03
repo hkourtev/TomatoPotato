@@ -3,7 +3,6 @@ package com.njinfotech.algorithmvisualizer;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -12,25 +11,72 @@ import java.util.Random;
  */
 public class AlgoKruskal {
 
-    private StepRecorder sr;
-    private Graph G;
-    private int currEdgeInd;
+    public List<Step> steps;
+    public List<Integer> MSTEdges;
+    public Graph G;
+    public int currEdgeInd;
 
     // -----------------------------------CONSTRUCTORS ---------------------------------------------
     // when first running algorithm pass graph
-    public AlgoKruskal(Graph graph, StepRecorder sr) {
+    public AlgoKruskal(Graph graph) {
         try {
             G = (Graph) graph.clone();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        this.sr = sr;
+        steps = new ArrayList<Step>();
+        MSTEdges = new ArrayList<Integer>();
         currEdgeInd = -1;
     }
 
-    public void generateSteps(){
-        MST();
+    // used when replaying algorithm step by step, pass fresh graph and steps list
+    public AlgoKruskal(Graph graph, List<Step> algoSteps) {
+        try {
+            G = (Graph) graph.clone();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        steps = algoSteps;
+        MSTEdges = new ArrayList<Integer>();
+        currEdgeInd = -1;
+
+        for(int i = 0; i < G.nodes.length;i++){
+            G.nodes[i].parent = null;
+        }
+    }
+
+    // ----------------------------------STEP FUNCTIONS---------------------------------------------
+    public void _MakeSet(String nodeName) {
+        MakeSet(G.getNode(nodeName));
+    }
+
+    public void _Union(String root1, String root2) {
+        Link(G.getNode(root1), G.getNode(root2));
+    }
+
+    public void _IncreaseRank(String nodeName) {
+        G.getNode(nodeName).rank++;
+    }
+
+    public void _SortEdges() {
+        SortEdges(G.edges, 0, G.edges.length - 1);
+    }
+
+    public void _AddMSTEdge(String edgeIndex) {
+        AddMSTEdge(Integer.parseInt(edgeIndex));
+    }
+
+    public void _SelectEdge(String edgeIndex) {
+        currEdgeInd = Integer.parseInt(edgeIndex);
+    }
+
+    public void _SkipEdge() {
+        // basically do nothing - skip edge
+    }
+
+    public void _Done() {
+        // increase edge index, so that when we are done no edge is selected as being active
+        currEdgeInd++;
     }
 
 
@@ -49,33 +95,35 @@ public class AlgoKruskal {
         if (xRoot.rank > yRoot.rank) {
             // x root rank > y root rank, no need to increment
             Link(xRoot, yRoot);
-            sr.addStep("_union", "Unite the sets that node " + x.label + " belongs to (tree with root " +
-                    xRoot.label + ") and " + y.label + " belongs to (tree with root " +
-                    yRoot.label + ") by making node " + xRoot.label +
-                    " parent of node " + yRoot.label, new String[]{xRoot.label, yRoot.label});
-
+            steps.add(new Step("_Union", new Class[]{String.class, String.class}, new String[]{xRoot.label, yRoot.label},
+                    "Unite the sets that node " + x.label + " belongs to (tree with root " +
+                            xRoot.label + ") and " + y.label + " belongs to (tree with root " +
+                            yRoot.label + ") by making node " + xRoot.label +
+                            " parent of node " + yRoot.label, true, true));
         } else {
             if (xRoot.rank == yRoot.rank) {
                 // unite
                 Link(xRoot, yRoot);
-                sr.addStep("_union", "Unite the sets that node " + x.label + " belongs to (tree with root " +
-                        xRoot.label + ") and " + y.label + " belongs to (tree with root " +
-                        yRoot.label + ") by making node " + xRoot.label +
-                        " parent of node " + yRoot.label, new String[] {xRoot.label,yRoot.label});
+                steps.add(new Step("_Union", new Class[] {String.class, String.class}, new String[] {xRoot.label,yRoot.label},
+                        "Unite the sets that node " + x.label + " belongs to (tree with root " +
+                                xRoot.label + ") and " + y.label + " belongs to (tree with root " +
+                                yRoot.label + ") by making node " + xRoot.label +
+                                " parent of node " + yRoot.label, true, false));
 
                 // x root rank == y root rank, increase x root rank by 1
                 xRoot.rank++;
-                sr.addStep("_IncreaseRank", "Since the root of the parent tree (node " +
+                steps.add(new Step("_IncreaseRank", new Class[] {String.class}, new String[] {xRoot.label}, "Since the root of the parent tree (node " +
                         xRoot.label + ") has the same rank as the root of the tree being appended (node " +
-                        yRoot.label + "), we increase the rank of node " + xRoot.label, new String[] {xRoot.label});
+                        yRoot.label + "), we increase the rank of node " + xRoot.label, false, false));
             }
             else {
                 // y root rank > x root rank, make y parent of x
                 Link(yRoot, xRoot);
-                sr.addStep("_union","Unite the sets that node " + y.label + " belongs to (tree with root " +
+                steps.add(new Step("_Union", new Class[]{String.class, String.class}, new String[]{yRoot.label, xRoot.label},
+                        "Unite the sets that node " + y.label + " belongs to (tree with root " +
                                 yRoot.label + ") and " + x.label + " belongs to (tree with root " +
                                 xRoot.label + ") by making node " + yRoot.label +
-                                " parent of node " + xRoot.label,new String[]{yRoot.label, xRoot.label});
+                                " parent of node " + xRoot.label, true, true));
 
             }
         }
@@ -145,45 +193,57 @@ public class AlgoKruskal {
     }
     // Randomized QuickSort End
 
+    public void AddMSTEdge(int edgeIndex) {
+        MSTEdges.add(edgeIndex);
+    }
 
     // execute algorithm and generate MST edges list and steps along the way
-    public void MST() {
+    public void MST()
+    {
         // make a set for each node
-        for (int i = 0; i < G.nodes.length; i++) {
+        for (int i = 0; i < G.nodes.length; i++)
+        {
             MakeSet(G.nodes[i]);
-            sr.addStep("_makeSet", "Create set of 1 with root node " + G.nodes[i].label, new String[]{G.nodes[i].label});
+            steps.add(new Step("_MakeSet", new Class[] {String.class}, new String[] {G.nodes[i].label},
+                        "Create set of 1 with root node " + G.nodes[i].label, false, false));
         }
 
         // sort edges
-        //It's throwing some error when I try to use the quick sort here. So...
-        Arrays.sort(G.edges);
-
-        sr.addStep("_SortEdges", "Sort all graph edges by weight in ascending order", new String[]{});
+        _SortEdges();
+        steps.add(new Step("_SortEdges", new Class[] {}, new String[] {},
+                "Sort all graph edges by weight in ascending order", false, false));
 
         for (int i = 0; i < G.edges.length; i++) {
             // select edge
-            sr.addStep("_SelectEdge", "Select edge (" +
+            steps.add(new Step("_SelectEdge", new Class[] {String.class},
+                    new String[] {Integer.toString(i)}, "Select edge (" +
                     G.edges[i].startNode.label + "," + G.edges[i].endNode.label +
-                    ")", new String[] {Integer.toString(i)});
+                    ")", true, false));
 
             if(FindSet(G.edges[i].startNode) != FindSet(G.edges[i].endNode)) {
-                sr.addStep("_AddMSTEdge", "Adding edge (" +
+                // add edge to the MST 
+                AddMSTEdge(i);
+                steps.add(new Step("_AddMSTEdge", new Class[] {String.class}, new String[] {Integer.toString(i)}, "Adding edge (" +
                         G.edges[i].startNode.label + "," + G.edges[i].endNode.label +
-                        ") to MST", new String[] {Integer.toString(i)});
+                        ") to MST", false, false));
                 
                 // unite sets - steps for union added inside function
                 Union(G.edges[i].startNode, G.edges[i].endNode);
             } else {
-                sr.addStep("_SkipEdge", "Nodes " +
+                steps.add(new Step("_SkipEdge", new Class[] {}, new String[] {}, "Nodes " +
                         G.edges[i].startNode.label + " and " + G.edges[i].endNode.label +
                         " belong to the same set.\n\nCannot unite.\n\n" +
-                        "Skipping edge.", new String[] {});
+                        "Skipping edge.", true, false));
             }
         }
 
+        // done
+        int MSTweight = 0;
+        for (int j=0; j<MSTEdges.size(); j++)
+            MSTweight+=G.edges[MSTEdges.get(j)].weight;
 
-        sr.addStep("_Done", "All edges explored.\n\n" +
-                "Minimum Weight Spanning Tree complete. \n\n" +
-                "Press QUIT to go back", new String[] {});
+        steps.add(new Step("_Done", new Class[] {}, new String[] {}, "All edges explored.\n\n" +
+                "Minimum Weight Spanning Tree complete.\n\nWeight: " + MSTweight + "\n\n" +
+                "Press QUIT to go back", true, false));
     }
 }

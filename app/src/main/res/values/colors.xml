@@ -16,6 +16,9 @@
     <color name="nodeLabelFontColor">#000000</color>
     <color name="nodeRankFontColor">#000000</color>
 
-    <color name="learnActTextViewBack">#d5fcce</color>
-    <color name="testActTextViewBack">#d5fcce</color>
+    <color name="regularMessage">#000000</color>
+    <color name="errorMessage">#ff0000</color>
+
+    <color name="learnActTextViewBack">#dcf3ff</color>
+    <color name="testActTextViewBack">#dcf3ff</color>
 </resources>

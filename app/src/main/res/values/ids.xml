@@ -9,6 +9,7 @@
     <item name="btnLearnNextStep" type="id" />
     <item name="btnLearnPrevStep" type="id" />
     <item name="btnLearnQuit" type="id" />
+    <item name="btnLearnSwitchView" type="id" />
 
     <item name="testActCanvasId" type="id" />
     <item name="testActTextViewId" type="id" />
@@ -21,4 +22,5 @@
     <item name="btnTestMakeSet" type="id" />
     <item name="btnTestSelectEdge" type="id" />
     <item name="btnTestStart" type="id" />
+    <item name="btnTestSwitchView" type="id" />
 </resources>
