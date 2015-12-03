@@ -19,13 +19,13 @@ public class Step implements Cloneable {
     public Step() {
     }
 
-    public Step(String stepCommand, Class[] params, String[] args, String stepDescription, Boolean haltAfterStep,
-                Boolean paramOrderMatters) {
+    public Step(String stepCommand, Class[] params, String[] args, String stepDescription,
+                Boolean validateStep, Boolean paramOrderMatters) {
         command = stepCommand;
         parameters = params;
         arguments = args;
         description = stepDescription;
-        pause = haltAfterStep;
+        pause = validateStep;
         orderMatters = paramOrderMatters;
         executed = false;
     }

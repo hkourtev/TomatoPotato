@@ -85,18 +85,20 @@ public class TestActivity extends AppCompatActivity {
                                         " more node(s) or press 'Cancel'");
                             } else {
                                 // if we now have all paramters - enable check step button
-                                commandWindow.setText("You have successfully selected node (" + n.label + "). \n\n" +
-                                        "No more parameters required for this action. \n\n" +
-                                        "Press 'Check Step' or 'Cancel'");
+                                //commandWindow.setText("You have successfully selected node (" + n.label + "). \n\n" +
+                                //        "No more parameters required for this action. \n\n" +
+                                //        "Press 'Check Step' or 'Cancel'");
 
-                                setButtonStates(false, false, false, false, false, false, true, true, false);
+                                //setButtonStates(false, false, false, false, false, false, true, true, false);
+
+                                if (currentAction.command.equals("_Union")) {
+                                    // reset button text
+                                    Button thisBtn = (Button)findViewById(R.id.btnTestUnion);
+                                    thisBtn.setText(getResources().getString(R.string.btnTestUnion));
+                                }
+
+                                checkStep(false);
                             }
-                        } else {
-                            // msg that you cannot select any more nodes
-                            commandWindow.setText("Warning: You have selected the maximum number of nodes for this action. \n\n" +
-                                    "Press 'Check Step' or 'Cancel'");
-
-                            setButtonStates(false, false, false, false, false, false, true, true, false);
                         }
                     }
                 }
@@ -148,8 +150,16 @@ public class TestActivity extends AppCompatActivity {
         // reinitialize algorithm with fresh graph and steps & wait for input
         kruskal = new AlgoKruskal(myGraph, kruskal.steps);
 
-        // draw
-        draw();
+        // execute initial steps - make sets
+        executeCurrentStep(true);
+
+        // let the user know we skipped some steps
+        String notice = "NOTE: All MakeSet operations and the SortEdges operation have already "
+                + "been executed automatically, as they are trivial.\n\nPlease begin by getting an " +
+                "edge from the list.";
+        commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
+        commandWindow.setText(notice);
+        Toast.makeText(getApplicationContext(), notice, Toast.LENGTH_LONG).show();
 
         // disable start button and enable action buttons, except for CHECK STEP
         // we enable that only after an action
@@ -164,12 +174,25 @@ public class TestActivity extends AppCompatActivity {
     }
 
     public void stepUnion(View view) {
-        currentAction = new Action("_Union", 2);
-        commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
-        commandWindow.setText("Action Union(_,_) selected. \n\n" +
-                "Select the roots of the 2 sets that should be united.");
+        if (currentAction == null) {
+            currentAction = new Action("_Union", 2);
+            commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
+            commandWindow.setText("Action Union(_,_) selected. \n\n" +
+                    "Select the roots of the 2 sets that should be united.");
 
-        setButtonStates(false, false, false, false, false, false, false, true, false);
+            Button thisBtn = (Button)view;
+            thisBtn.setText(getResources().getString(R.string.btnTestCancel));
+            setButtonStates(false, false, false, false, false, true, false, true, false);
+        } else {
+            // cancel action
+            commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
+            commandWindow.setText("Action Cancelled. Select new action and try again.");
+            currentAction = null;
+
+            Button thisBtn = (Button)view;
+            thisBtn.setText(getResources().getString(R.string.btnTestUnion));
+            setButtonStates(false, true, true, true, true, true, false, false, true);
+        }
     }
 
     public void stepMakeSet(View view) {
@@ -192,7 +215,8 @@ public class TestActivity extends AppCompatActivity {
         commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
         commandWindow.setText("Action SkipEdge selected.\n\nPress 'Check Step' or 'Cancel'");
 
-        setButtonStates(false, false, false, false, false, false, true, true, false);
+        //setButtonStates(false, false, false, false, false, false, true, true, false);
+        checkStep(false);
     }
 
     public void stepSortEdges(View view) {
@@ -205,15 +229,37 @@ public class TestActivity extends AppCompatActivity {
     }
 
     public void stepSelectEdge(View view) {
-        // select next edge, user doesn't need to select anything
-        currentAction = new Action("_SelectEdge", 1);
-        currentAction.addParam(Integer.toString(kruskal.currEdgeInd + 1));
-        commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
-        commandWindow.setText("Edge (" + kruskal.G.edges[kruskal.currEdgeInd + 1].startNode.label +
-                "," + kruskal.G.edges[kruskal.currEdgeInd + 1].endNode.label +
-                ") successfully selected. \n\nPress 'Check Step' or 'Cancel'");
+        // check if this is the last skip edge before done
+        if ((kruskal.steps.size()-2 == currStep) &&
+                kruskal.steps.get(currStep).command.equals("_SkipEdge")) {
+            currentAction = new Action("_SkipEdge", 0);
+            commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
+            commandWindow.setText("Action SkipEdge selected.\n\nPress 'Check Step' or 'Cancel'");
 
-        setButtonStates(false, false, false, false, false, false, true, true, false);
+            checkStep(false);
+        } else {
+            // check if we need to skip current edge or we are done with this and need to get next
+            if (kruskal.steps.get(currStep).command.equals("_SkipEdge") &&
+                    kruskal.steps.get(currStep + 1).command.equals("_SelectEdge")) {
+                currentAction = new Action("_SkipEdge", 0);
+                commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
+                commandWindow.setText("Action SkipEdge selected.\n\nPress 'Check Step' or 'Cancel'");
+
+                //setButtonStates(false, false, false, false, false, false, true, true, false);
+                executeCurrentStep(false);
+            }
+
+            // select next edge, user doesn't need to select anything
+            currentAction = new Action("_SelectEdge", 1);
+            currentAction.addParam(Integer.toString(kruskal.currEdgeInd + 1));
+            commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
+            commandWindow.setText("Edge (" + kruskal.G.edges[kruskal.currEdgeInd + 1].startNode.label +
+                    "," + kruskal.G.edges[kruskal.currEdgeInd + 1].endNode.label +
+                    ") successfully selected. \n\nPress 'Check Step' or 'Cancel'");
+
+            //setButtonStates(false, false, false, false, false, false, true, true, false);
+            checkStep(false);
+        }
     }
 
     public void stepCancel(View view) {
@@ -250,23 +296,23 @@ public class TestActivity extends AppCompatActivity {
                                 Boolean switchView) {
         // enable/disable the right buttons
         Button btnStart = (Button)findViewById(R.id.btnTestStart);
-        Button btnMakeSet = (Button)findViewById(R.id.btnTestMakeSet);
-        Button btnSortEdges = (Button)findViewById(R.id.btnTestSortEdges);
+        //Button btnMakeSet = (Button)findViewById(R.id.btnTestMakeSet);
+        //Button btnSortEdges = (Button)findViewById(R.id.btnTestSortEdges);
         Button btnSelEdge = (Button)findViewById(R.id.btnTestSelectEdge);
-        Button btnSkipEdge = (Button)findViewById(R.id.btnTestSkipEdge);
+        //Button btnSkipEdge = (Button)findViewById(R.id.btnTestSkipEdge);
         Button btnUnion = (Button)findViewById(R.id.btnTestUnion);
-        Button btnCheckStep = (Button)findViewById(R.id.btnTestCheck);
-        Button btnCancel = (Button)findViewById(R.id.btnTestCancel);
+        //Button btnCheckStep = (Button)findViewById(R.id.btnTestCheck);
+        //Button btnCancel = (Button)findViewById(R.id.btnTestCancel);
         Button btnSwitchView = (Button)findViewById(R.id.btnTestSwitchView);
 
         btnStart.setEnabled(start);
-        btnMakeSet.setEnabled(makeSet);
-        btnSortEdges.setEnabled(sortEdges);
+        //btnMakeSet.setEnabled(makeSet);
+        //btnSortEdges.setEnabled(sortEdges);
         btnSelEdge.setEnabled(selEdge);
-        btnSkipEdge.setEnabled(skipEdge);
+        //btnSkipEdge.setEnabled(skipEdge);
         btnUnion.setEnabled(union);
-        btnCheckStep.setEnabled(checkStep);
-        btnCancel.setEnabled(cancel);
+        //btnCheckStep.setEnabled(checkStep);
+        //btnCancel.setEnabled(cancel);
         btnSwitchView.setEnabled(switchView);
     }
 
@@ -320,9 +366,8 @@ public class TestActivity extends AppCompatActivity {
         // play error sound
         playSound(false);
 
-        String errorMsg;
-        if ((currentAction.command.equals("_Union") && kruskal.steps.get(currStep+1).command.equals("_Union")) ||
-                currentAction.command.equals(kruskal.steps.get(currStep).command)) {
+        String errorMsg = "";
+        if (currentAction.command.equals(kruskal.steps.get(currStep).command)) {
             // correct step selected but wrong input provided
             errorMsg = "Error: Correct action selected but wrong parameters provided. ";
         } else {
@@ -330,19 +375,15 @@ public class TestActivity extends AppCompatActivity {
             errorMsg = "Error: Wrong action selected. ";
         }
 
-
         // store errors
         numConsecutiveErrors++;
         numTotalErrors++;
-        if (numConsecutiveErrors > 1) {
-            // if x errors in a row
-            if (numConsecutiveErrors == numErrorsTillSkip) {
-                errorMsg = errorMsg + "\n\nYou have made " + numConsecutiveErrors +
-                        " unsuccessful attempts. \n\nAutomatically advancing to next step.";
+        if (numConsecutiveErrors == numErrorsTillSkip) {
+            errorMsg = errorMsg + "\n\nYou have made " + numConsecutiveErrors +
+                    " unsuccessful attempts. \n\nAutomatically advancing to next step.";
 
-                // execute current step
-                checkStep(true);
-            }
+            // execute current step
+            checkStep(true);
         } else {
             errorMsg = errorMsg + " Try again.\n\n" +
                     "# of errors until step is skipped: " + (numErrorsTillSkip - numConsecutiveErrors);
@@ -365,32 +406,11 @@ public class TestActivity extends AppCompatActivity {
         // used in cases when the user is stuck and made several mistakes after another
 
         if (skipStep) {
-            if (currentAction.command.equals("_Union") && kruskal.steps.get(currStep+1).command.equals("_Union")) {
-                // special case for union to avoid having a button for _AddMST command
-                // automatically execute addMSTedge step, so that we do not need a button for it
-                executeStep(currStep, false);
-                currStep++;
-
-                // execute the union step
-                executeStep(currStep, false);
-                currStep++;
-
-                // if next step is increase rank execute that automatically as well
-                if (kruskal.steps.get(currStep).command.equals("_IncreaseRank")) {
-                    executeStep(currStep, false);
-                    currStep++;
-                }
-            } else {
-
-                // execute step
-                executeStep(currStep, false);
-                currStep++;
-            }
+            executeCurrentStep(false);
 
             if (currStep == kruskal.steps.size() - 1) {
                 // execute the last step (_DONE) automatically & disable all buttons
-                executeStep(currStep, false);
-                currStep++;
+                executeCurrentStep(false);
 
                 // set up buttons
                 setButtonStates(false, false, false, false, false, false, false, false, true);
@@ -399,66 +419,100 @@ public class TestActivity extends AppCompatActivity {
                 setButtonStates(false, true, true, true, true, true, false, false, true);
             }
         } else if (currentAction != null) {
-            if (currentAction.numRcvdParam == currentAction.numExpectParam) {
-                // compare action to current step
-                if (currentAction.command.equals("_Union") && kruskal.steps.get(currStep+1).command.equals("_Union")) {
-                    // special case for union to avoid having a button for _AddMST command
-                    if (kruskal.steps.get(currStep+1).compare(currentAction.command,
-                            currentAction.parameters, kruskal.steps.get(currStep+1).orderMatters)) {
-                        // automatically execute addMSTedge step, so that we do not need a button for it
-                        executeStep(currStep, false);
-                        currStep++;
+            if (kruskal.steps.get(currStep).compare(currentAction.command,
+                    currentAction.parameters, kruskal.steps.get(currStep).orderMatters)) {
+                // play success sound
+                playSound(true);
 
-                        // execute the union step
-                        executeStep(currStep, false);
-                        currStep++;
+                // execute step
+                executeCurrentStep(false);
+            } else {
+                // error
+                error();
+            }
 
-                        // if next step is increase rank execute that automatically as well
-                        if (kruskal.steps.get(currStep).command.equals("_IncreaseRank")) {
-                            executeStep(currStep, false);
-                            currStep++;
-                        }
+            // clear action - ready for next
+            currentAction = null;
 
-                        // play success sound
-                        playSound(true);
-                    } else {
-                        // error
-                        error();
-                    }
-                } else {
-                    if (kruskal.steps.get(currStep).compare(currentAction.command,
-                            currentAction.parameters, kruskal.steps.get(currStep).orderMatters)) {
-                        // play success sound
-                        playSound(true);
+            if (currStep == kruskal.steps.size() - 1) {
+                // execute the last step (_DONE) automatically & disable all buttons
+                executeCurrentStep(false);
 
-                        // execute step
-                        executeStep(currStep, false);
-                        currStep++;
-                    } else {
-                        // error
-                        error();
-                    }
-                }
-
-                // clear action - ready for next
-                currentAction = null;
-
-                if (currStep == kruskal.steps.size() - 1) {
-                    // execute the last step (_DONE) automatically & disable all buttons
-                    executeStep(currStep, false);
-                    currStep++;
-
-                    // set up buttons
-                    setButtonStates(false, false, false, false, false, false, false, false, true);
-                } else {
-                    // set up buttons
-                    setButtonStates(false, true, true, true, true, true, false, false, true);
-                }
+                // set up buttons
+                setButtonStates(false, false, false, false, false, false, false, false, true);
+            } else {
+                // set up buttons
+                setButtonStates(false, true, true, true, true, true, false, false, true);
             }
         }
     }
 
-    public void executeStep(int p, boolean supressMessage) {
+    public void executeCurrentStep(boolean supressMessage) {
+        Boolean done = false;
+        Boolean supressDraw = false;
+        String msg = "";
+        int numStepsExecuted = 0;
+
+        while (!done) {
+            // if this is a step that can be skipped
+            if (kruskal.steps.get(currStep).pause == false) {
+                // if next step != pause we will keep going so don't redraw
+                if (kruskal.steps.size()-1 > currStep) {
+                    if (!kruskal.steps.get(currStep+1).pause) {
+                        supressDraw = true;
+                    }
+                    else {
+                        // after this step we halt so we are done and we also need to draw
+                        supressDraw = false;
+                        done = true;
+                    }
+                }
+
+                if (!supressMessage) {
+                    // store the message for display at the end
+                    if (msg.isEmpty()) msg = kruskal.steps.get(currStep).description;
+                    else msg = msg + "\n\n" + kruskal.steps.get(currStep).description;
+                }
+            } else {
+                // this is a halt step
+
+                // if next step != pause we will keep going so don't redraw
+                if (kruskal.steps.size()-1 > currStep) {
+                    if (!kruskal.steps.get(currStep+1).pause) {
+                        supressDraw = true;
+                    }
+                    else {
+                        // after this step we halt so we are done and we also need to draw
+                        supressDraw = false;
+                        done = true;
+                    }
+                } else {
+                    // this is the last step before done
+                    supressDraw = false;
+                    done = true;
+                }
+
+                if ((!done || done && numStepsExecuted > 0) && !supressMessage) {
+                    // store the message for display at the end
+                    if (msg.isEmpty()) msg = kruskal.steps.get(currStep).description;
+                    else msg = msg + "\n\n" + kruskal.steps.get(currStep).description;
+                }
+            }
+
+            executeStep(currStep, supressMessage, supressDraw);
+            currStep++;
+            numStepsExecuted++;
+        }
+
+        // check if
+        // if we have messages - display them
+        if (!msg.isEmpty() && !supressMessage) {
+            commandWindow.setTextColor(getResources().getColor(R.color.regularMessage));
+            commandWindow.setText(msg);
+        }
+    }
+
+    public void executeStep(int p, boolean supressMessage, boolean supressDraw) {
         // execute step using reflection
         try {
 
@@ -499,7 +553,8 @@ public class TestActivity extends AppCompatActivity {
         }
 
         // draw
-        draw();
+        if (!supressDraw)
+            draw();
 
         // reset error counter
         numConsecutiveErrors = 0;

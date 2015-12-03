@@ -221,14 +221,14 @@ public class AlgoKruskal {
                     ")", true, false));
 
             if(FindSet(G.edges[i].startNode) != FindSet(G.edges[i].endNode)) {
-                // add edge to the MST 
-                AddMSTEdge(i);
-                steps.add(new Step("_AddMSTEdge", new Class[] {String.class}, new String[] {Integer.toString(i)}, "Adding edge (" +
-                        G.edges[i].startNode.label + "," + G.edges[i].endNode.label +
-                        ") to MST", false, false));
-                
                 // unite sets - steps for union added inside function
                 Union(G.edges[i].startNode, G.edges[i].endNode);
+
+                // add edge to the MST
+                AddMSTEdge(i);
+                steps.add(new Step("_AddMSTEdge", new Class[]{String.class}, new String[]{Integer.toString(i)}, "Adding edge (" +
+                        G.edges[i].startNode.label + "," + G.edges[i].endNode.label +
+                        ") to MST", false, false));
             } else {
                 steps.add(new Step("_SkipEdge", new Class[] {}, new String[] {}, "Nodes " +
                         G.edges[i].startNode.label + " and " + G.edges[i].endNode.label +

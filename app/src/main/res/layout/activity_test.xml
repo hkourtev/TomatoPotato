@@ -31,7 +31,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
             android:padding="@dimen/activityTestTextViewPad"
             android:text="@string/txtViewAvailOpt" />
 
-        <Button
+<!--        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btnTestMakeSet"
@@ -45,7 +45,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
             android:text="@string/btnTestSortEdges"
             android:textSize="@dimen/activityLearnBtnTxtSize"
             android:id="@id/btnTestSortEdges"
-            android:onClick="stepSortEdges" />
+            android:onClick="stepSortEdges" /> -->
 
         <Button
             android:layout_width="match_parent"
@@ -56,13 +56,13 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
             android:onClick="stepSelectEdge" />
 
 
-        <Button
+<!--        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/btnTestSkipEdge"
             android:textSize="@dimen/activityLearnBtnTxtSize"
             android:id="@id/btnTestSkipEdge"
-            android:onClick="stepSkipEdge" />
+            android:onClick="stepSkipEdge" />-->
 
         <Button
             android:layout_width="match_parent"
@@ -70,8 +70,9 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
             android:text="@string/btnTestUnion"
             android:textSize="@dimen/activityLearnBtnTxtSize"
             android:id="@id/btnTestUnion"
-            android:onClick="stepUnion" />
-
+            android:onClick="stepUnion"
+            android:layout_marginBottom="@dimen/activityTestPaddingBottom"/>
+<!--
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,7 +88,7 @@ tools:context="com.njinfotech.algorithmvisualizer.TestActivity">
             android:textSize="@dimen/activityLearnBtnTxtSize"
             android:id="@id/btnTestCancel"
             android:onClick="stepCancel"
-            android:layout_marginBottom="@dimen/activityTestPaddingBottom"/>
+            android:layout_marginBottom="@dimen/activityTestPaddingBottom"/>-->
 
         <Button
             android:layout_width="match_parent"

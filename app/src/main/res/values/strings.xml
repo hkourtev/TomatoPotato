@@ -10,7 +10,7 @@
     <string name="btnLearnSwitchViewTree">SWITCH TO GRAPH VIEW</string>
     <string name="btnLearnSwitchViewGraph">SWITCH TO TREE VIEW</string>
 
-    <string name="btnTestCancel">CANCEL</string>
+    <string name="btnTestCancel">CANCEL UNION(_,_)</string>
     <string name="btnTestQuit">QUIT</string>
     <string name="txtViewAvailOpt">ACTIONS:</string>
     <string name="btnTestUnion">UNION(_,_)</string>
